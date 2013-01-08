@@ -14,6 +14,7 @@ obj-				:=
 
 obj-y				+= clock.o
 obj-y				+= irq.o
+obj-y 				+= dev-onenand.o
 obj-$(CONFIG_S5P_EXT_INT)	+= irq-eint.o
 obj-$(CONFIG_S5P_GPIO_INT)	+= irq-gpioint.o
 obj-$(CONFIG_S5P_SYSTEM_MMU)	+= sysmmu.o

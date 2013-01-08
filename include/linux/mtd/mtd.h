@@ -97,6 +97,23 @@ struct mtd_oob_ops {
 	uint8_t		*oobbuf;
 };
 
+/*
+ * oob operation modes
+ *
+ * MTD_OOB_PLACE:       oob data are placed at the given offset
+ * MTD_OOB_AUTO:        oob data are automatically placed at the free areas
+ *                      which are defined by the ecclayout
+ * MTD_OOB_RAW:         mode to read raw data+oob in one chunk. The oob data
+ *                      is inserted into the data. Thats a raw image of the
+ *                      flash contents.
+ */
+typedef enum {
+        MTD_OOB_PLACE,
+        MTD_OOB_AUTO,
+        MTD_OOB_RAW,
+} mtd_oob_mode_t;
+
+
 #define MTD_MAX_OOBFREE_ENTRIES_LARGE	32
 #define MTD_MAX_ECCPOS_ENTRIES_LARGE	448
 /*
@@ -398,5 +415,28 @@ static inline int mtd_is_eccerr(int err) {
 static inline int mtd_is_bitflip_or_eccerr(int err) {
 	return mtd_is_bitflip(err) || mtd_is_eccerr(err);
 }
+
+/*
+ * Debugging macro and defines
+ */
+#define MTD_DEBUG_LEVEL0        (0)     /* Quiet   */
+#define MTD_DEBUG_LEVEL1        (1)     /* Audible */
+#define MTD_DEBUG_LEVEL2        (2)     /* Loud    */
+#define MTD_DEBUG_LEVEL3        (3)     /* Noisy   */
+
+#ifdef CONFIG_MTD_DEBUG
+#define DEBUG(n, args...)                               \
+        do {                                            \
+                if (n <= CONFIG_MTD_DEBUG_VERBOSE)      \
+                        printk(KERN_INFO args);         \
+        } while(0)
+#else /* CONFIG_MTD_DEBUG */
+#define DEBUG(n, args...)                               \
+        do {                                            \
+                if (0)                                  \
+                        printk(KERN_INFO args);         \
+        } while(0)
+
+#endif /* CONFIG_MTD_DEBUG */
 
 #endif /* __MTD_MTD_H__ */
