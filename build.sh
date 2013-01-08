@@ -5,7 +5,7 @@
 # By Mark "Hill Beast" Kennard
 #
 
-TOOLCHAIN=/usr/arm-4.6-toolchain/bin/arm-eabi-
+TOOLCHAIN=/usr/arm-4.6-toolchain/bin/arm-none-eabi-
 ARCH=arm
 
 CPUCORES=`grep "cpu cores" /proc/cpuinfo | awk '{ print $4 }' | head -c 1`

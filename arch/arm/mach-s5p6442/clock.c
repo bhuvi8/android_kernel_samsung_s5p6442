@@ -170,6 +170,17 @@ static struct clksrc_clk clk_mout_d1sync = {
 	.reg_src	= { .reg = S5P_CLK_MUX_STAT1, .shift = 24, .size = 3 },
 };
 
+static struct clk *clk_src_mmc0_list[] = {
+	[0] = &clk_mout_mpll.clk,
+	[1] = &clk_mout_d1.clk,
+	[2] = &clk_dout_apll,
+};
+
+static struct clksrc_sources clk_src_mmc0 = {
+	.sources	= clk_src_mmc0_list,
+	.nr_sources	= ARRAY_SIZE(clk_src_mmc0_list),
+};
+
 static struct clk clk_hclkd0 = {
 	.name		= "hclkd0",
 	.id		= -1,
@@ -267,6 +278,18 @@ static struct clksrc_clk clksrcs[] = {
 	}
 };
 
+static struct clksrc_clk clk_sclk_mmc0 = {
+	.clk	= {
+		.name		= "sclk_mmc",
+		.devname	= "s3c-sdhci.0",
+		.ctrlbit	= (1 << 16),
+		.enable		= s5p6442_clk_ip2_ctrl,
+	},
+	.sources = &clk_src_mmc0,
+	.reg_src = { .reg = S5P_CLK_SRC4, .shift = 0, .size = 2 },
+	.reg_div = { .reg = S5P_CLK_DIV4, .shift = 0, .size = 4 },
+};
+
 /* Clock initialisation code */
 static struct clksrc_clk *init_parents[] = {
 	&clk_mout_apll,
@@ -277,6 +300,7 @@ static struct clksrc_clk *init_parents[] = {
 	&clk_mout_d0sync,
 	&clk_mout_d1,
 	&clk_mout_d1sync,
+	&clk_sclk_mmc0,
 };
 
 void __init_or_cpufreq s5p6442_setup_clocks(void)
@@ -349,6 +373,9 @@ void __init_or_cpufreq s5p6442_setup_clocks(void)
 	clk_f.rate = arm;
 	clk_h.rate = hclkd1;
 	clk_p.rate = pclkd1;
+
+	clk_set_parent(&clk_sclk_mmc0.clk, &clk_mout_mpll.clk);
+        clk_set_rate(&clk_sclk_mmc0.clk, 50*MHZ);
 
 	clk_pclkd0.rate = pclkd0;
 	clk_pclkd1.rate = pclkd1;
@@ -426,18 +453,14 @@ static struct clk clk_hsmmc1 = {
 	.ctrlbit	= (1<<17),
 };
 
-static struct clk clk_hsmmc2 = {
-	.name		= "hsmmc",
-	.devname	= "s3c-sdhci.2",
-	.parent		= &clk_hclkd1,
-	.enable		= s5p6442_clk_ip2_ctrl,
-	.ctrlbit	= (1<<18),
-};
-
 static struct clk *clk_cdev[] = {
 	&clk_hsmmc0,
 	&clk_hsmmc1,
-	&clk_hsmmc2,
+};
+
+static struct clksrc_clk *clksrc_cdev[] = {
+	&clk_sclk_mmc0,
+//	&clk_sclk_mmc1,
 };
 
 static struct clk *clks[] __initdata = {
@@ -459,13 +482,8 @@ static struct clk *clks[] __initdata = {
 static struct clk_lookup s5p6442_clk_lookup[] = {
 	CLKDEV_INIT("s3c-sdhci.0", "mmc_busclk.0", &clk_hsmmc0),
 	CLKDEV_INIT("s3c-sdhci.1", "mmc_busclk.0", &clk_hsmmc1),
-	CLKDEV_INIT("s3c-sdhci.2", "mmc_busclk.0", &clk_hsmmc2),
-	CLKDEV_INIT("s3c-sdhci.0", "mmc_busclk.1", &clk_hsmmc0),
-	CLKDEV_INIT("s3c-sdhci.1", "mmc_busclk.1", &clk_hsmmc1),
-	CLKDEV_INIT("s3c-sdhci.2", "mmc_busclk.1", &clk_hsmmc2),
-	CLKDEV_INIT("s3c-sdhci.0", "mmc_busclk.2", &clk_hsmmc0),
-	CLKDEV_INIT("s3c-sdhci.1", "mmc_busclk.2", &clk_hsmmc1),
-	CLKDEV_INIT("s3c-sdhci.2", "mmc_busclk.2", &clk_hsmmc2),
+	//CLKDEV_INIT("s3c-sdhci.0", "mmc_busclk.2", &clk_sclk_mmc0.clk),
+	//CLKDEV_INIT("s3c-sdhci.1", "mmc_busclk.2", &clk_sclk_mmc1.clk),
 };
 
 void __init s5p6442_register_clocks(void)
@@ -485,6 +503,9 @@ void __init s5p6442_register_clocks(void)
 	s3c24xx_register_clocks(clk_cdev, ARRAY_SIZE(clk_cdev));
 	for (ptr = 0; ptr < ARRAY_SIZE(clk_cdev); ptr++)
 		s3c_disable_clocks(clk_cdev[ptr], 1);
+
+	for (ptr = 0; ptr < ARRAY_SIZE(clksrc_cdev); ptr++)
+		s3c_register_clksrc(clksrc_cdev[ptr], 1);
 
 	s3c_pwmclk_init();
 }
