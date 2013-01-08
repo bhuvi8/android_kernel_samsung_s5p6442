@@ -1476,6 +1476,209 @@ static struct samsung_gpio_chip s5p6440_gpios_2bit[] = {
 };
 
 /*
+ * Followings are the gpio banks in S5P6442
+ *
+ * The 'config' member when left to NULL, is initialized to the default
+ * structure samsung_gpio_cfgs[3] in the init function below.
+ *
+ * The 'base' member is also initialized in the init function below.
+ * Note: The initialization of 'base' member of samsung_gpio_chip structure
+ * uses the above macro and depends on the banks being listed in order here.
+ */
+
+static struct samsung_gpio_chip s5p6442_gpios_4bit[] = {
+#ifdef CONFIG_CPU_S5P6442
+	{
+		.chip	= {
+			.base	= S5P6442_GPA0(0),
+			.ngpio	= S5P6442_GPIO_A0_NR,
+			.label	= "GPA0",
+		},
+	}, {
+		.chip	= {
+			.base	= S5P6442_GPA1(0),
+			.ngpio	= S5P6442_GPIO_A1_NR,
+			.label	= "GPA1",
+		},
+	}, {
+		.chip	= {
+			.base	= S5P6442_GPB(0),
+			.ngpio	= S5P6442_GPIO_B_NR,
+			.label	= "GPB",
+		},
+	}, {
+		.chip	= {
+			.base	= S5P6442_GPC0(0),
+			.ngpio	= S5P6442_GPIO_C0_NR,
+			.label	= "GPC0",
+		},
+	}, {
+		.chip	= {
+			.base	= S5P6442_GPC1(0),
+			.ngpio	= S5P6442_GPIO_C1_NR,
+			.label	= "GPC1",
+		},
+	}, {
+		.chip	= {
+			.base	= S5P6442_GPD0(0),
+			.ngpio	= S5P6442_GPIO_D0_NR,
+			.label	= "GPD0",
+		},
+	}, {
+		.chip	= {
+			.base	= S5P6442_GPD1(0),
+			.ngpio	= S5P6442_GPIO_D1_NR,
+			.label	= "GPD1",
+		},
+	}, {
+		.chip	= {
+			.base	= S5P6442_GPE0(0),
+			.ngpio	= S5P6442_GPIO_E0_NR,
+			.label	= "GPE0",
+		},
+	}, {
+		.chip	= {
+			.base	= S5P6442_GPE1(0),
+			.ngpio	= S5P6442_GPIO_E1_NR,
+			.label	= "GPE1",
+		},
+	}, {
+		.chip	= {
+			.base	= S5P6442_GPF0(0),
+			.ngpio	= S5P6442_GPIO_F0_NR,
+			.label	= "GPF0",
+		},
+	}, {
+		.chip	= {
+			.base	= S5P6442_GPF1(0),
+			.ngpio	= S5P6442_GPIO_F1_NR,
+			.label	= "GPF1",
+		},
+	}, {
+		.chip	= {
+			.base	= S5P6442_GPF2(0),
+			.ngpio	= S5P6442_GPIO_F2_NR,
+			.label	= "GPF2",
+		},
+	}, {
+		.chip	= {
+			.base	= S5P6442_GPF3(0),
+			.ngpio	= S5P6442_GPIO_F3_NR,
+			.label	= "GPF3",
+		},
+	}, {
+		.chip	= {
+			.base	= S5P6442_GPG0(0),
+			.ngpio	= S5P6442_GPIO_G0_NR,
+			.label	= "GPG0",
+		},
+	}, {
+		.chip	= {
+			.base	= S5P6442_GPG1(0),
+			.ngpio	= S5P6442_GPIO_G1_NR,
+			.label	= "GPG1",
+		},
+	}, {
+		.chip	= {
+			.base	= S5P6442_GPG2(0),
+			.ngpio	= S5P6442_GPIO_G2_NR,
+			.label	= "GPG2",
+		},
+	}, {
+		.chip	= {
+			.base	= S5P6442_GPH0(0),
+			.ngpio	= S5P6442_GPIO_H0_NR,
+			.label	= "GPH0",
+		},
+	}, {
+		.chip	= {
+			.base	= S5P6442_GPH1(0),
+			.ngpio	= S5P6442_GPIO_H1_NR,
+			.label	= "GPH1",
+		},
+	}, {
+		.chip	= {
+			.base	= S5P6442_GPH2(0),
+			.ngpio	= S5P6442_GPIO_H2_NR,
+			.label	= "GPH2",
+		},
+	}, {
+		.chip	= {
+			.base	= S5P6442_GPH3(0),
+			.ngpio	= S5P6442_GPIO_H3_NR,
+			.label	= "GPH3",
+		},
+	}, {
+		.chip	= {
+			.base	= S5P6442_GPJ0(0),
+			.ngpio	= S5P6442_GPIO_J0_NR,
+			.label	= "GPJ0",
+		},
+	}, {
+		.chip	= {
+			.base	= S5P6442_GPJ1(0),
+			.ngpio	= S5P6442_GPIO_J1_NR,
+			.label	= "GPJ1",
+		},
+	}, {
+		.chip	= {
+			.base	= S5P6442_GPJ2(0),
+			.ngpio	= S5P6442_GPIO_J2_NR,
+			.label	= "GPJ2",
+		},
+	}, {
+		.chip	= {
+			.base	= S5P6442_GPJ3(0),
+			.ngpio	= S5P6442_GPIO_J3_NR,
+			.label	= "GPJ3",
+		},
+	}, {
+		.chip	= {
+			.base	= S5P6442_GPJ4(0),
+			.ngpio	= S5P6442_GPIO_J4_NR,
+			.label	= "GPJ4",
+		},
+	}, {
+		.base	= (S5P_VA_GPIO + 0xC00),
+		.irq_base = IRQ_EINT(0),
+		.chip	= {
+			.base	= S5P6442_GPH0(0),
+			.ngpio	= S5P6442_GPIO_H0_NR,
+			.label	= "GPH0",
+			.to_irq = samsung_gpiolib_to_irq,
+		},
+	}, {
+		.base	= (S5P_VA_GPIO + 0xC20),
+		.irq_base = IRQ_EINT(8),
+		.chip	= {
+			.base	= S5P6442_GPH1(0),
+			.ngpio	= S5P6442_GPIO_H1_NR,
+			.label	= "GPH1",
+			.to_irq = samsung_gpiolib_to_irq,
+		},
+	}, {
+		.base	= (S5P_VA_GPIO + 0xC40),
+		.irq_base = IRQ_EINT(16),
+		.chip	= {
+			.base	= S5P6442_GPH2(0),
+			.ngpio	= S5P6442_GPIO_H2_NR,
+			.label	= "GPH2",
+			.to_irq = samsung_gpiolib_to_irq,
+		},
+	}, {
+		.base	= (S5P_VA_GPIO + 0xC60),
+		.irq_base = IRQ_EINT(24),
+		.chip	= {
+			.base	= S5P6442_GPH3(0),
+			.ngpio	= S5P6442_GPIO_H3_NR,
+			.label	= "GPH3",
+			.to_irq = samsung_gpiolib_to_irq,
+		},
+	},
+#endif
+};
+
+/*
  * S5P6450 GPIO bank summary:
  *
  * Bank	GPIOs	Style	SlpCon	ExtInt Group
@@ -2774,9 +2977,12 @@ static __init int samsung_gpiolib_init(void)
 		s5p_register_gpioint_bank(IRQ_GPIOINT, 0, S5P_GPIOINT_GROUP_MAXNR);
 #endif
 	} else if (soc_is_s5p6442()) {
+		printk("%s: S5P6442 detected\n", __func__);
 		group = 0;
-		chip = s5pv210_gpios_4bit;
-		nr_chips = ARRAY_SIZE(s5pv210_gpios_4bit);
+		chip = s5p6442_gpios_4bit;
+		nr_chips = ARRAY_SIZE(s5p6442_gpios_4bit);
+		
+		printk("%s: %i GPIO chips will be used\n", __func__, nr_chips);
 
 		for (i = 0; i < nr_chips; i++, chip++) {
 			if (!chip->config) {
@@ -2784,8 +2990,9 @@ static __init int samsung_gpiolib_init(void)
 				chip->group = group++;
 			}
 		}
-		samsung_gpiolib_add_4bit_chips(s5pv210_gpios_4bit, nr_chips, S5P_VA_GPIO);
+		samsung_gpiolib_add_4bit_chips(s5p6442_gpios_4bit, nr_chips, S5P_VA_GPIO);
 #if defined(CONFIG_CPU_S5P6442) && defined(CONFIG_S5P_GPIO_INT)
+		printk("%s: Registering GPIO interrupt %i \n", __func__, IRQ_GPIOINT);
 		s5p_register_gpioint_bank(IRQ_GPIOINT, 0, S5P_GPIOINT_GROUP_MAXNR);
 #endif
 	} else if (soc_is_s5pv210()) {

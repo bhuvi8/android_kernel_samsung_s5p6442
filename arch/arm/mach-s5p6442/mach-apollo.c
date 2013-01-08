@@ -94,12 +94,6 @@ static struct s3c_sdhci_platdata apollo_hsmmc1_pdata __initdata = {
 	.max_width		= 8,
 };
 
-static struct s3c_sdhci_platdata apollo_hsmmc2_pdata __initdata = {
-	.cd_type		= S3C_SDHCI_CD_INTERNAL,
-	.clk_type		= S3C_SDHCI_CLK_DIV_INTERNAL,
-	.max_width		= 8,
-};
-
 static struct bml_partition apollo_bml_partitions[] = {
 	{
 		.name		= "kernel",
