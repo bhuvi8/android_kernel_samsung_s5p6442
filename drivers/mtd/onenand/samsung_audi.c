@@ -48,6 +48,8 @@
 #include <asm/mach/flash.h>
 #include <asm/atomic.h>
 
+#include "../mtdcore.h"
+
 #define DRIVER_NAME	"s5p-onenand"
 
 #define ONENAND_SUPERLOAD			// Enable Superload command (4KB page only)
