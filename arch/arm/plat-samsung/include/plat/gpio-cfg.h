@@ -24,7 +24,7 @@
 #ifndef __PLAT_GPIO_CFG_H
 #define __PLAT_GPIO_CFG_H __FILE__
 
-#include<linux/types.h>
+#include <linux/types.h>
 
 typedef unsigned int __bitwise__ samsung_gpio_pull_t;
 typedef unsigned int __bitwise__ s5p_gpio_drvstr_t;
@@ -133,6 +133,7 @@ extern int s3c_gpio_cfgpin_range(unsigned int start, unsigned int nr,
 #define S3C_GPIO_PULL_NONE	((__force samsung_gpio_pull_t)0x00)
 #define S3C_GPIO_PULL_DOWN	((__force samsung_gpio_pull_t)0x01)
 #define S3C_GPIO_PULL_UP	((__force samsung_gpio_pull_t)0x02)
+#define S3C_GPIO_PULL_PREV      ((__force samsung_gpio_pull_t)0x03)
 
 /**
  * s3c_gpio_setpull() - set the state of a gpio pin pull resistor
