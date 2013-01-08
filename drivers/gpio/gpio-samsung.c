@@ -1639,42 +1639,134 @@ static struct samsung_gpio_chip s5p6442_gpios_4bit[] = {
 			.label	= "GPJ4",
 		},
 	}, {
-		.base	= (S5P_VA_GPIO + 0xC00),
-		.irq_base = IRQ_EINT(0),
+		.base	= S5P6442_MP01_BASE,
+                .chip   = {
+			.base	= S5P6442_MP01(0),
+			.ngpio	= S5P6442_GPIO_MP01_NR,
+                        .label  = "MP01",
+			.to_irq = samsung_gpiolib_to_irq,
+                },
+        }, {
+		.base	= S5P6442_MP02_BASE,
+                .chip   = {
+			.base	= S5P6442_MP02(0),
+			.ngpio	= S5P6442_GPIO_MP02_NR,
+                        .label  = "MP02",
+			.to_irq = samsung_gpiolib_to_irq,
+                },
+        }, {
+		.base	= S5P6442_MP03_BASE,
+                .chip   = {
+			.base	= S5P6442_MP03(0),
+			.ngpio	= S5P6442_GPIO_MP03_NR,
+                        .label  = "MP03",
+			.to_irq = samsung_gpiolib_to_irq,
+                },
+        }, {
+		.base	= S5P6442_MP04_BASE,
+                .chip   = {
+			.base	= S5P6442_MP04(0),
+			.ngpio	= S5P6442_GPIO_MP04_NR,
+                        .label  = "MP04",
+			.to_irq = samsung_gpiolib_to_irq,
+                },
+        }, {
+		.base	= S5P6442_MP05_BASE,
+                .chip   = {
+			.base	= S5P6442_MP05(0),
+			.ngpio	= S5P6442_GPIO_MP05_NR,
+                        .label  = "MP05",
+			.to_irq = samsung_gpiolib_to_irq,
+                },
+        }, {
+		.base	= S5P6442_MP06_BASE,
+                .chip   = {
+			.base	= S5P6442_MP06(0),
+			.ngpio	= S5P6442_GPIO_MP06_NR,
+                        .label  = "MP06",
+			.to_irq = samsung_gpiolib_to_irq,
+                },
+        }, {
+		.base	= S5P6442_MP07_BASE,
+                .chip   = {
+			.base	= S5P6442_MP07(0),
+			.ngpio	= S5P6442_GPIO_MP07_NR,
+                        .label  = "MP07",
+			.to_irq = samsung_gpiolib_to_irq,
+                },
+	}, {
+		.base	= S5P6442_MP10_BASE,
 		.chip	= {
-			.base	= S5P6442_GPH0(0),
-			.ngpio	= S5P6442_GPIO_H0_NR,
-			.label	= "GPH0",
+			.base	= S5P6442_MP10(0),
+			.ngpio	= S5P6442_GPIO_MP10_NR,
+			.label	= "MP10",
 			.to_irq = samsung_gpiolib_to_irq,
 		},
 	}, {
-		.base	= (S5P_VA_GPIO + 0xC20),
-		.irq_base = IRQ_EINT(8),
+		.base	= S5P6442_MP11_BASE,
 		.chip	= {
-			.base	= S5P6442_GPH1(0),
-			.ngpio	= S5P6442_GPIO_H1_NR,
-			.label	= "GPH1",
+			.base	= S5P6442_MP11(0),
+			.ngpio	= S5P6442_GPIO_MP11_NR,
+			.label	= "MP11",
 			.to_irq = samsung_gpiolib_to_irq,
 		},
 	}, {
-		.base	= (S5P_VA_GPIO + 0xC40),
-		.irq_base = IRQ_EINT(16),
+		.base	= S5P6442_MP12_BASE,
 		.chip	= {
-			.base	= S5P6442_GPH2(0),
-			.ngpio	= S5P6442_GPIO_H2_NR,
-			.label	= "GPH2",
+			.base	= S5P6442_MP12(0),
+			.ngpio	= S5P6442_GPIO_MP12_NR,
+			.label	= "MP12",
 			.to_irq = samsung_gpiolib_to_irq,
 		},
 	}, {
-		.base	= (S5P_VA_GPIO + 0xC60),
-		.irq_base = IRQ_EINT(24),
+		.base	= S5P6442_MP13_BASE,
 		.chip	= {
-			.base	= S5P6442_GPH3(0),
-			.ngpio	= S5P6442_GPIO_H3_NR,
-			.label	= "GPH3",
+			.base	= S5P6442_MP13(0),
+			.ngpio	= S5P6442_GPIO_MP13_NR,
+			.label	= "MP13",
 			.to_irq = samsung_gpiolib_to_irq,
 		},
-	},
+	}, {
+		.base	= S5P6442_MP14_BASE,
+		.chip	= {
+			.base	= S5P6442_MP14(0),
+			.ngpio	= S5P6442_GPIO_MP14_NR,
+			.label	= "MP14",
+			.to_irq = samsung_gpiolib_to_irq,
+		},
+	}, {
+		.base	= S5P6442_MP15_BASE,
+		.chip	= {
+			.base	= S5P6442_MP15(0),
+			.ngpio	= S5P6442_GPIO_MP15_NR,
+			.label	= "MP15",
+			.to_irq = samsung_gpiolib_to_irq,
+		},
+	}, {
+		.base	= S5P6442_MP16_BASE,
+		.chip	= {
+			.base	= S5P6442_MP16(0),
+			.ngpio	= S5P6442_GPIO_MP16_NR,
+			.label	= "MP16",
+			.to_irq = samsung_gpiolib_to_irq,
+		},
+	}, {
+		.base	= S5P6442_MP17_BASE,
+		.chip	= {
+			.base	= S5P6442_MP17(0),
+			.ngpio	= S5P6442_GPIO_MP17_NR,
+			.label	= "MP17",
+			.to_irq = samsung_gpiolib_to_irq,
+        }, 
+	}, {
+		.base	= S5P6442_MP18_BASE,
+		.chip	= {
+			.base	= S5P6442_MP18(0),
+			.ngpio	= S5P6442_GPIO_MP18_NR,
+			.label	= "MP18",
+			.to_irq = samsung_gpiolib_to_irq,
+		},
+	}
 #endif
 };
 

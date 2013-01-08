@@ -114,6 +114,46 @@ static struct platform_device apollo_bml_device = {
 	},
 };
 
+static void check_hw_rev_pin(void)
+{
+	int data;
+	int apollo_hw_rev_pin_value = 0;
+
+	#define GPIO_BOOT_MODE				S5P6442_GPJ3(3)	
+	#define GPIO_BOOT_MODE_STATE		0
+	#define GPIO_LCD_ID				S5P6442_MP04(4)
+	#define GPIO_LCD_ID_STATE		0
+	#define GPIO_HW_REV_MODE0			S5P6442_MP04(7)
+	#define GPIO_HW_REV_MODE0_STATE		0
+	#define GPIO_HW_REV_MODE1			S5P6442_MP05(0)
+	#define GPIO_HW_REV_MODE1_STATE		0
+	#define GPIO_HW_REV_MODE2			S5P6442_MP05(1)
+	#define GPIO_HW_REV_MODE2_STATE		0
+
+	// set gpio configuration
+	s3c_gpio_cfgpin(GPIO_HW_REV_MODE2, GPIO_HW_REV_MODE2_STATE);
+	s3c_gpio_cfgpin(GPIO_HW_REV_MODE1, GPIO_HW_REV_MODE1_STATE);
+	s3c_gpio_cfgpin(GPIO_HW_REV_MODE0, GPIO_HW_REV_MODE0_STATE);
+	s3c_gpio_cfgpin(GPIO_BOOT_MODE, GPIO_BOOT_MODE_STATE);
+
+	data = gpio_get_value(GPIO_HW_REV_MODE2);
+	if(data)
+		apollo_hw_rev_pin_value |= (0x1<<2);
+	data = gpio_get_value(GPIO_HW_REV_MODE1);
+	if(data)
+		apollo_hw_rev_pin_value |= (0x1<<1);
+	data = gpio_get_value(GPIO_HW_REV_MODE0);
+	if(data)
+		apollo_hw_rev_pin_value |= (0x1<<0);
+
+	printk("%s : hw_rev_pin=0x%x\n", __func__, apollo_hw_rev_pin_value);
+
+	data = gpio_get_value(GPIO_BOOT_MODE);
+	printk("%s : bootmode=0x%x\n", __func__, data);
+	data = gpio_get_value(GPIO_LCD_ID);
+	printk("%s : lcd_id=%d\n", __func__, data);
+}
+
 static struct platform_device *apollo_devices[] __initdata = {
 	&s3c_device_i2c0,
 	&samsung_asoc_dma,
@@ -155,6 +195,8 @@ static void __init apollo_machine_init(void)
 
 	s3c_sdhci0_set_platdata(&apollo_hsmmc0_pdata);
 	s3c_sdhci1_set_platdata(&apollo_hsmmc1_pdata);
+
+	check_hw_rev_pin();
 }
 
 static void __init apollo_fixup(struct tag *tags, char **cmdline,
