@@ -422,6 +422,24 @@ static struct clk init_clocks[] = {
 		.enable		= s5p6442_clk_ip3_ctrl,
 		.ctrlbit	= (1 << 19),
 	}, {
+		.name		= "i2c",
+		.id		= 0,
+		.parent		= &clk_pclkd1,
+		.enable		= s5p6442_clk_ip3_ctrl,
+		.ctrlbit	= (1 << 7),
+	}, {
+		.name		= "i2c",
+		.id		= 1,
+		.parent		= &clk_pclkd1,
+		.enable		= s5p6442_clk_ip3_ctrl,
+		.ctrlbit	= (1 << 5),
+	}, {
+		.name		= "i2c",
+		.id		= 2,
+		.parent		= &clk_pclkd1,
+		.enable		= s5p6442_clk_ip3_ctrl,
+		.ctrlbit	= (1 << 4),
+	}, {
 		.name		= "watchdog",
 		.id		= -1,
 		.parent		= &clk_pclkd1,

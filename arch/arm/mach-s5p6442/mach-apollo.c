@@ -517,7 +517,6 @@ void s5p_config_gpio_table(int array_size, int (*gpio_table)[6])
 	pr_debug("%s: ++\n", __func__);
 	for (i = 0; i < array_size; i++) {
 		gpio = gpio_table[i][0];		
-		printk("gpio|state [%i|%i] ", gpio_table[i][0], gpio_table[i][1]);
 		s3c_gpio_cfgpin(gpio, S3C_GPIO_SFN(gpio_table[i][1]));
 		s3c_gpio_setpull(gpio, gpio_table[i][3]);
 		s3c_gpio_cfgpin(gpio, gpio_table[i][4]);
