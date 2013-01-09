@@ -17,6 +17,7 @@
 #include <linux/init.h>
 #include <linux/serial_core.h>
 #include <linux/i2c.h>
+#include <linux/i2c-gpio.h>
 
 #include <linux/mtd/mtd.h>
 #include <linux/mtd/onenand.h>
@@ -205,26 +206,6 @@ int apollo_get_remapped_hw_rev_pin()
 
 	return revision;
 }
-
-static struct platform_device *apollo_devices[] __initdata = {
-	&s3c_device_i2c0,
-	&samsung_asoc_dma,
-	&s5p6442_device_iis0,
-	&s3c_device_wdt,
-	&s3c_device_rtc,
-
-	&s3c_device_hsmmc0,
-	&s3c_device_hsmmc1,		// SDIO for WLAN
-
-	&s5p_device_fimc0,
-	&s5p_device_fimc1,
-	&s5p_device_fimc2,
-	&s5p_device_jpeg,
-	&s3c_device_fb,
-
-	&s5p_device_onenand,
-	&apollo_bml_device,
-};
 
 static struct i2c_board_info apollo_i2c_devs0[] __initdata = {
 	{ I2C_BOARD_INFO("wm8994", 0x1b), },
@@ -571,6 +552,81 @@ void s5p6442_init_gpio(void)
 					s5p6442_gpio_alive_table);
 }
 
+static struct i2c_gpio_platform_data i2c3_platdata = {
+        .sda_pin                = GPIO_AP_SDA,
+        .scl_pin                = GPIO_AP_SCL,
+        .udelay                 = 2,    /* 250KHz */
+        .sda_is_open_drain      = 0,
+        .scl_is_open_drain      = 0,
+        .scl_is_output_only     = 1,
+};
+
+static struct platform_device i2c3_gpio = {
+        .name                           = "i2c-gpio",
+        .id                                     = 3,
+        .dev.platform_data      = &i2c3_platdata,
+};
+
+static struct i2c_gpio_platform_data i2c4_platdata = {
+        .sda_pin                = GPIO_AP_PMIC_SDA,
+        .scl_pin                = GPIO_AP_PMIC_SCL,
+        .udelay                 = 2,    /* 250KHz */
+        .sda_is_open_drain      = 0,
+        .scl_is_open_drain      = 0,
+        .scl_is_output_only     = 1,
+};
+
+static struct platform_device i2c4_gpio = {
+        .name                           = "i2c-gpio",
+        .id                                     = 4,
+        .dev.platform_data      = &i2c4_platdata,
+};
+
+static struct i2c_gpio_platform_data i2c7_platdata = {
+        .sda_pin                = GPIO_FM_SDA_2_8V,
+        .scl_pin                = GPIO_FM_SCL_2_8V,
+        .udelay                 = 2,           /*250KHz*/
+	.sda_is_open_drain      = 0,
+        .scl_is_open_drain      = 0,
+        .scl_is_output_only     = 0,
+};
+
+static struct platform_device i2c7_gpio = {
+        .name                           = "i2c-gpio",
+        .id                                     = 7,
+        .dev.platform_data      = &i2c7_platdata,
+};
+
+static struct i2c_gpio_platform_data i2c8_platdata = {
+        .sda_pin                = GPIO_AP_SDA_2_8V,
+        .scl_pin                = GPIO_AP_SCL_2_8V,
+        .udelay                 = 2,           /*250KHz*/
+	.sda_is_open_drain      = 0,
+        .scl_is_open_drain      = 0,
+        .scl_is_output_only     = 0,
+};
+
+static struct platform_device i2c8_gpio = {
+        .name                           = "i2c-gpio",
+        .id                                     = 8,
+        .dev.platform_data      = &i2c8_platdata,
+};
+
+static struct i2c_gpio_platform_data i2c9_platdata = {
+        .sda_pin                = GPIO_SENSOR_SDA,
+        .scl_pin                = GPIO_SENSOR_SCL,
+        .udelay                 = 2,           /*250KHz*/
+	.sda_is_open_drain      = 0,
+        .scl_is_open_drain      = 0,
+        .scl_is_output_only     = 0,
+};
+
+static struct platform_device i2c9_gpio = {
+        .name                	= "i2c-gpio",
+        .id                   	= 9,
+        .dev.platform_data      = &i2c9_platdata,
+};
+
 static void __init apollo_map_io(void)
 {
 	s5p_init_io(NULL, 0, S5P_VA_CHIPID);
@@ -579,11 +635,41 @@ static void __init apollo_map_io(void)
 	s5p_set_timer_source(S5P_PWM3, S5P_PWM4);
 }
 
+static struct platform_device *apollo_devices[] __initdata = {
+	&s3c_device_i2c0,
+	&s3c_device_i2c1,
+	&s3c_device_i2c2,
+	&i2c3_gpio,
+	&i2c4_gpio,
+	&i2c7_gpio,
+	&i2c8_gpio,
+	&i2c9_gpio,
+
+	&samsung_asoc_dma,
+	&s5p6442_device_iis0,
+	&s3c_device_wdt,
+	&s3c_device_rtc,
+
+	&s3c_device_hsmmc0,
+	&s3c_device_hsmmc1,		// SDIO for WLAN
+
+	&s5p_device_fimc0,
+	&s5p_device_fimc1,
+	&s5p_device_fimc2,
+	&s5p_device_jpeg,
+	&s3c_device_fb,
+
+	&s5p_device_onenand,
+	&apollo_bml_device,
+};
+
 static void __init apollo_machine_init(void)
 {
 	check_hw_rev_pin();
 	s5p6442_init_gpio();
 	s3c_i2c0_set_platdata(NULL);
+	s3c_i2c1_set_platdata(NULL);
+	s3c_i2c2_set_platdata(NULL);
 	i2c_register_board_info(0, apollo_i2c_devs0,
 			ARRAY_SIZE(apollo_i2c_devs0));
 	platform_add_devices(apollo_devices, ARRAY_SIZE(apollo_devices));

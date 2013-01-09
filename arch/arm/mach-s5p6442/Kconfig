@@ -28,7 +28,8 @@ config MACH_APOLLO
 	bool "APOLLO"
 	select CPU_S5P6442
 	select S3C_DEV_FB
-#	select S3C_DEV_I2C1
+	select S3C_DEV_I2C1
+	select S3C_DEV_I2C2
 	select S3C_DEV_RTC
 	select S3C_DEV_WDT
 	select S3C_DEV_HSMMC
