@@ -142,7 +142,7 @@ static void check_hw_rev_pin(void)
 	
 }
 
-int apollo_get_hw_type()
+int apollo_get_hw_type(void)
 {
 	int type;
 
@@ -169,7 +169,7 @@ int apollo_get_hw_type()
 }
 EXPORT_SYMBOL(apollo_get_hw_type);
 
-int apollo_get_remapped_hw_rev_pin()
+int apollo_get_remapped_hw_rev_pin(void)
 {
 	int revision;
 
