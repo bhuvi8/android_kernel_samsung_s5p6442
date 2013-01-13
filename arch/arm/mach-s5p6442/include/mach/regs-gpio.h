@@ -15,6 +15,10 @@
 
 #include <mach/map.h>
 
+#define EINT_REG_NR(x)			(EINT_OFFSET(x) >> 3)
+
+#define eint_irq_to_bit(irq)		(1 << (EINT_OFFSET(irq) & 0x7))
+
 /* Base addresses for each of the banks */
 
 #define S5P6442_GPA0_BASE		(S5P_VA_GPIO + 0x0000)
@@ -90,6 +94,13 @@
 #define S5P64X0_EINT0FLTCON1		(S5P_VA_GPIO + EINT0FLTCON1_OFFSET)
 #define S5P64X0_EINT0MASK		(S5P_VA_GPIO + EINT0MASK_OFFSET)
 #define S5P64X0_EINT0PEND		(S5P_VA_GPIO + EINT0PEND_OFFSET)
+
+#define EINT_MODE		S3C_GPIO_SFN(0xf)
+
+#define EINT_GPIO_0(x)			S5P6442_GPH0(x)
+#define EINT_GPIO_1(x)			S5P6442_GPH1(x)
+#define EINT_GPIO_2(x)			S5P6442_GPH2(x)
+#define EINT_GPIO_3(x)			S5P6442_GPH3(x)
 
 /* compatibility for plat-s5p/irq-pm.c */
 #define S5P_EINT_CON(x)			(S5P64X0_EINT0CON0 + ((x) * 0x4))

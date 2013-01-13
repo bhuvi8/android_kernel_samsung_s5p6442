@@ -18,6 +18,9 @@
 #include <linux/serial_core.h>
 #include <linux/i2c.h>
 #include <linux/i2c-gpio.h>
+#include <linux/input.h>
+#include <linux/input/matrix_keypad.h>
+#include <linux/gpio_keys.h>
 
 #include <linux/mtd/mtd.h>
 #include <linux/mtd/onenand.h>
@@ -43,6 +46,7 @@
 #include <plat/s5p-time.h>
 #include <plat/sdhci.h>
 #include <plat/onenand-core.h>
+#include <plat/keypad.h>
 
 #include <media/s5p_fimc.h>
 
@@ -294,6 +298,76 @@ static void __init apollo_map_io(void)
 	s5p_set_timer_source(S5P_PWM3, S5P_PWM4);
 }
 
+static uint32_t apollo_keymap[] __initdata = {
+	KEY(0, 3, KEY_1), KEY(0, 4, KEY_2), KEY(0, 5, KEY_3),
+	KEY(0, 6, KEY_4), KEY(0, 7, KEY_5),
+	KEY(1, 3, KEY_A), KEY(1, 4, KEY_B), KEY(1, 5, KEY_C),
+	KEY(1, 6, KEY_D), KEY(1, 7, KEY_E)
+};
+
+static struct matrix_keymap_data apollo_keymap_data = {
+	.keymap			= apollo_keymap,
+	.keymap_size		= ARRAY_SIZE(apollo_keymap),
+};
+
+static struct samsung_keypad_platdata apollo_keypad_pdata __initdata = {
+	.keymap_data		= &apollo_keymap_data,
+	.rows			= 4,
+	.cols			= 4,
+	.no_autorepeat		= 1,
+	.wakeup			= 1,
+};
+
+static struct gpio_keys_button apollo_gpio_keys_data[] = {
+	{
+		.gpio			= S5P6442_GPH3(4),
+		.code			= KEY_VOLUMEUP,
+		.desc			= "Volume Up",
+		.active_low		= 1,
+		.debounce_interval	= 5,
+		.type			= EV_KEY,
+		.wakeup			= 1,
+	}, {
+		.gpio			= S5P6442_GPH3(5),
+		.code			= KEY_VOLUMEDOWN,
+		.desc			= "Volume Down",
+		.active_low		= 1,
+		.debounce_interval	= 5,
+		.type			= EV_KEY,
+		.wakeup			= 1,
+	}, {
+		.gpio			= S5P6442_GPH3(6),
+		.code			= KEY_BACK,
+		.desc			= "Back",
+		.active_low		= 1,
+		.debounce_interval	= 5,
+		.type			= EV_KEY,
+		.wakeup			= 1,
+	}, {
+		.gpio			= S5P6442_GPH3(7),
+		.code			= KEY_MENU,
+		.desc			= "Menu",
+		.active_low		= 1,
+		.debounce_interval	= 5,
+		.type			= EV_KEY,
+		.wakeup			= 1,
+	},  
+};
+
+static struct gpio_keys_platform_data apollo_gpio_keys_pdata = {
+	.buttons		= apollo_gpio_keys_data,
+	.nbuttons		= ARRAY_SIZE(apollo_gpio_keys_data),
+};
+
+static struct platform_device apollo_gpio_keys = {
+	.name			= "gpio-keys",
+	.id			= 0,
+	.num_resources		= 0,
+	.dev			= {
+				.platform_data	= &apollo_gpio_keys_pdata,
+				}
+};
+
 static struct platform_device *apollo_devices[] __initdata = {
 	&s3c_device_i2c0,
 	&s3c_device_i2c1,
@@ -311,6 +385,9 @@ static struct platform_device *apollo_devices[] __initdata = {
 
 	&s3c_device_hsmmc0,
 	&s3c_device_hsmmc1,		// SDIO for WLAN
+
+	&samsung_device_keypad,
+	&apollo_gpio_keys,
 
 	&s5p_device_fimc0,
 	&s5p_device_fimc1,
@@ -330,15 +407,23 @@ static void __init apollo_machine_init(void)
 	s3c_i2c2_set_platdata(NULL);
 	i2c_register_board_info(0, apollo_i2c_devs0,
 			ARRAY_SIZE(apollo_i2c_devs0));
-	platform_add_devices(apollo_devices, ARRAY_SIZE(apollo_devices));
 
 	s3c_sdhci0_set_platdata(&apollo_hsmmc0_pdata);
 	s3c_sdhci1_set_platdata(&apollo_hsmmc1_pdata);
+
+	samsung_keypad_set_platdata(&apollo_keypad_pdata);
+
+	platform_add_devices(apollo_devices, ARRAY_SIZE(apollo_devices));
 
 	printk("%s : hw_rev_pin=0x%x\n", __func__, apollo_hw_rev_pin_value);
 	printk("%s : bootmode=0x%x\n", __func__, gpio_get_value(GPIO_BOOT_MODE));
 	printk("%s : lcd_id=%d\n", __func__, gpio_get_value(GPIO_LCD_ID));
 	printk("%s : uart_sel=%i\n", __func__, gpio_get_value(GPIO_UART_SEL));
+
+	printk("%s : but-vol-up=%i\n", __func__, gpio_get_value(S5P6442_GPH3(4)));
+	printk("%s : but-vol-dn=%i\n", __func__, gpio_get_value(S5P6442_GPH3(5)));
+	printk("%s : but-back=%i\n", __func__, gpio_get_value(S5P6442_GPH3(6)));
+	printk("%s : but-menu=%i\n", __func__, gpio_get_value(S5P6442_GPH3(7)));
 }
 
 static void __init apollo_fixup(struct tag *tags, char **cmdline,

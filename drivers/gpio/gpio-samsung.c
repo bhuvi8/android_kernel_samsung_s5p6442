@@ -1648,6 +1648,7 @@ static struct samsung_gpio_chip s5p6442_gpios_4bit[] = {
 			.base	= S5P6442_GPH1(0),
 			.ngpio	= S5P6442_GPIO_H1_NR,
 			.label	= "GPH1",
+			.to_irq	= samsung_gpiolib_to_irq,
 		},
 	}, {
 		.base	= S5P6442_GPH2_BASE,
@@ -1656,6 +1657,7 @@ static struct samsung_gpio_chip s5p6442_gpios_4bit[] = {
 			.base	= S5P6442_GPH2(0),
 			.ngpio	= S5P6442_GPIO_H2_NR,
 			.label	= "GPH2",
+			.to_irq	= samsung_gpiolib_to_irq,
 		},
 	}, {
 		.base	= S5P6442_GPH3_BASE,
@@ -1664,6 +1666,7 @@ static struct samsung_gpio_chip s5p6442_gpios_4bit[] = {
 			.base	= S5P6442_GPH3(0),
 			.ngpio	= S5P6442_GPIO_H3_NR,
 			.label	= "GPH3",
+			.to_irq	= samsung_gpiolib_to_irq,
 		},
 	}, {
 		.base	= S5P6442_GPJ0_BASE,
@@ -3136,13 +3139,10 @@ static __init int samsung_gpiolib_init(void)
 		s5p_register_gpioint_bank(IRQ_GPIOINT, 0, S5P_GPIOINT_GROUP_MAXNR);
 #endif
 	} else if (soc_is_s5p6442()) {
-		printk("%s: S5P6442 detected\n", __func__);
 		group = 0;
 		chip = s5p6442_gpios_4bit;
 		nr_chips = ARRAY_SIZE(s5p6442_gpios_4bit);
 		
-		printk("%s: %i GPIO chips will be used\n", __func__, nr_chips);
-
 		for (i = 0; i < nr_chips; i++, chip++) {
 			if (!chip->config) {
 				chip->config = &samsung_gpio_cfgs[3];
@@ -3151,7 +3151,6 @@ static __init int samsung_gpiolib_init(void)
 		}
 		samsung_gpiolib_add_4bit_chips(s5p6442_gpios_4bit, nr_chips, S5P_VA_GPIO);
 #if defined(CONFIG_CPU_S5P6442) && defined(CONFIG_S5P_GPIO_INT)
-		printk("%s: Registering GPIO interrupt %i \n", __func__, IRQ_GPIOINT);
 		s5p_register_gpioint_bank(IRQ_GPIOINT, 0, S5P_GPIOINT_GROUP_MAXNR);
 #endif
 	} else if (soc_is_s5pv210()) {

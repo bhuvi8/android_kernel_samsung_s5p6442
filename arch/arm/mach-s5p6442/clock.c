@@ -440,6 +440,12 @@ static struct clk init_clocks[] = {
 		.enable		= s5p6442_clk_ip3_ctrl,
 		.ctrlbit	= (1 << 4),
 	}, {
+		.name		= "keypad",
+		.id		= -1,
+		.parent		= &clk_pclkd1,
+		.enable		= s5p6442_clk_ip3_ctrl,
+		.ctrlbit	= (1 << 21),
+	}, {
 		.name		= "watchdog",
 		.id		= -1,
 		.parent		= &clk_pclkd1,
@@ -452,6 +458,7 @@ static struct clk init_clocks[] = {
 		.enable		= s5p6442_clk_ip3_ctrl,
 		.ctrlbit	= (1 << 23),
 	},
+
 };
 
 

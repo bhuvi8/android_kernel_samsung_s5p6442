@@ -13,7 +13,7 @@ obj-				:=
 # Core support for S5P6442 system
 
 obj-$(CONFIG_CPU_S5P6442)	+= cpu.o init.o clock.o dma.o
-obj-$(CONFIG_CPU_S5P6442)	+= setup-i2c0.o setup-i2c1.o setup-i2c2.o cpu-s5p.o
+obj-$(CONFIG_CPU_S5P6442)	+= setup-keypad.o setup-i2c0.o setup-i2c1.o setup-i2c2.o cpu-s5p.o
 
 # machine support
 
