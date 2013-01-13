@@ -92,13 +92,19 @@ static struct s3c2410_uartcfg apollo_uartcfgs[] __initdata = {
 
 static struct s3c_sdhci_platdata apollo_hsmmc0_pdata __initdata = {
 	.cd_type		= S3C_SDHCI_CD_INTERNAL,
-	.clk_type		= S3C_SDHCI_CLK_DIV_INTERNAL,
+	.clk_type		= S3C_SDHCI_CLK_DIV_EXTERNAL,
 	.max_width		= 8,
 };
 
 static struct s3c_sdhci_platdata apollo_hsmmc1_pdata __initdata = {
 	.cd_type		= S3C_SDHCI_CD_INTERNAL,
-	.clk_type		= S3C_SDHCI_CLK_DIV_INTERNAL,
+	.clk_type		= S3C_SDHCI_CLK_DIV_EXTERNAL,
+	.max_width		= 8,
+};
+
+static struct s3c_sdhci_platdata apollo_hsmmc2_pdata __initdata = {
+	.cd_type		= S3C_SDHCI_CD_INTERNAL,
+	.clk_type		= S3C_SDHCI_CLK_DIV_EXTERNAL,
 	.max_width		= 8,
 };
 
@@ -385,6 +391,7 @@ static struct platform_device *apollo_devices[] __initdata = {
 
 	&s3c_device_hsmmc0,
 	&s3c_device_hsmmc1,		// SDIO for WLAN
+	&s3c_device_hsmmc2,
 
 	&samsung_device_keypad,
 	&apollo_gpio_keys,
@@ -410,6 +417,7 @@ static void __init apollo_machine_init(void)
 
 	s3c_sdhci0_set_platdata(&apollo_hsmmc0_pdata);
 	s3c_sdhci1_set_platdata(&apollo_hsmmc1_pdata);
+	s3c_sdhci2_set_platdata(&apollo_hsmmc2_pdata);
 
 	samsung_keypad_set_platdata(&apollo_keypad_pdata);
 
