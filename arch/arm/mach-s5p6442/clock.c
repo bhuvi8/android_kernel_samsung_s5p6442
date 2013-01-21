@@ -452,6 +452,12 @@ static struct clk init_clocks_off[] = {
 
 static struct clk init_clocks[] = {
 	{
+		.name           = "jpeg",
+		.id             = -1,
+		.parent         = &clk_hclkd0,
+		.enable         = s5p6442_clk_ip0_ctrl,
+		.ctrlbit        = (1 << 28),
+	}, {
 		.name           = "lcd",
 		.id             = -1,
 		.parent         = &clk_hclkd1,
