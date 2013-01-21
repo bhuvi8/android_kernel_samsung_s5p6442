@@ -22,6 +22,7 @@
 #include <linux/input.h>
 #include <linux/input/matrix_keypad.h>
 #include <linux/gpio_keys.h>
+#include <linux/fb.h>
 
 #include <linux/mtd/mtd.h>
 #include <linux/mtd/onenand.h>
@@ -48,6 +49,8 @@
 #include <plat/sdhci.h>
 #include <plat/onenand-core.h>
 #include <plat/keypad.h>
+#include <plat/fb.h>
+#include <plat/regs-fb-v4.h>
 
 #include <media/s5p_fimc.h>
 
@@ -385,6 +388,28 @@ static struct platform_device apollo_gpio_keys = {
 				}
 };
 
+static struct s3c_fb_pd_win apollo_fb_win0 = {
+	.win_mode = {
+		.left_margin	= 13,
+		.right_margin	= 8,
+		.upper_margin	= 7,
+		.lower_margin	= 5,
+		.hsync_len	= 3,
+		.vsync_len	= 1,
+		.xres		= 240,
+		.yres		= 400,
+	},
+	.max_bpp	= 32,
+	.default_bpp	= 24,
+};
+
+static struct s3c_fb_platdata apollo_lcd0_pdata __initdata = {
+	.win[0]		= &apollo_fb_win0,
+	.vidcon0	= VIDCON0_VIDOUT_RGB | VIDCON0_PNRMODE_RGB,
+	.vidcon1	= VIDCON1_INV_HSYNC | VIDCON1_INV_VSYNC,
+	.setup_gpio	= s5p6442_fb_gpio_setup_24bpp,
+};
+
 static struct platform_device *apollo_devices[] __initdata = {
 	&s3c_device_i2c0,
 	&s3c_device_i2c1,
@@ -444,6 +469,8 @@ static void __init apollo_machine_init(void)
 	s3c_sdhci0_set_platdata(&apollo_hsmmc0_pdata);
 	s3c_sdhci1_set_platdata(&apollo_hsmmc1_pdata);
 	s3c_sdhci2_set_platdata(&apollo_hsmmc2_pdata);
+
+	s3c_fb_set_platdata(&apollo_lcd0_pdata);
 
 	samsung_keypad_set_platdata(&apollo_keypad_pdata);
 
