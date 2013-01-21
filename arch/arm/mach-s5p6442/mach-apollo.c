@@ -11,23 +11,23 @@
  * published by the Free Software Foundation.
 */
 
+#include <linux/fb.h>
 #include <linux/gpio.h>
-#include <linux/kernel.h>
-#include <linux/types.h>
-#include <linux/init.h>
-#include <linux/serial_core.h>
+#include <linux/gpio_keys.h>
 #include <linux/i2c.h>
 #include <linux/i2c-gpio.h>
-#include <linux/mfd/max8998.h>
+#include <linux/init.h>
 #include <linux/input.h>
 #include <linux/input/matrix_keypad.h>
-#include <linux/gpio_keys.h>
-#include <linux/fb.h>
+#include <linux/kernel.h>
+#include <linux/mfd/max8998.h>
+#include <linux/serial_core.h>
+#include <linux/types.h>
 
+#include <linux/mtd/bml.h>
 #include <linux/mtd/mtd.h>
 #include <linux/mtd/onenand.h>
 #include <linux/mtd/partitions.h>
-#include <linux/mtd/bml.h>
 
 #include <asm/mach/arch.h>
 #include <asm/mach/map.h>
@@ -35,39 +35,38 @@
 #include <asm/mach-types.h>
 #include <asm/hardware/vic.h>
 
+#include <mach/mach-apollo.h>
 #include <mach/map.h>
 #include <mach/regs-clock.h>
 #include <mach/regs-gpio.h>
 
-#include <plat/regs-serial.h>
-#include <plat/s5p6442.h>
-#include <plat/devs.h>
-#include <plat/gpio-cfg.h>
 #include <plat/cpu.h>
-#include <plat/iic.h>
-#include <plat/s5p-time.h>
-#include <plat/sdhci.h>
-#include <plat/onenand-core.h>
-#include <plat/keypad.h>
+#include <plat/devs.h>
 #include <plat/fb.h>
-#include <plat/regs-fb-v4.h>
+#include <plat/gpio-cfg.h>
+#include <plat/iic.h>
+#include <plat/keypad.h>
 #include <plat/mfc.h>
+#include <plat/onenand-core.h>
+#include <plat/regs-fb-v4.h>
+#include <plat/regs-serial.h>
+#include <plat/s5p-time.h>
+#include <plat/s5p6442.h>
+#include <plat/sdhci.h>
 
 #include <media/s5p_fimc.h>
 
-#include <mach/mach-apollo.h>
-
 /* Following are default values for UCON, ULCON and UFCON UART registers */
-#define apollo_UCON_DEFAULT	(S3C2410_UCON_TXILEVEL |	\
+#define APOLLO_UCON_DEFAULT	(S3C2410_UCON_TXILEVEL |	\
 				 S3C2410_UCON_RXILEVEL |	\
 				 S3C2410_UCON_TXIRQMODE |	\
 				 S3C2410_UCON_RXIRQMODE |	\
 				 S3C2410_UCON_RXFIFO_TOI |	\
 				 S3C2443_UCON_RXERR_IRQEN)
 
-#define apollo_ULCON_DEFAULT	S3C2410_LCON_CS8
+#define APOLLO_ULCON_DEFAULT	S3C2410_LCON_CS8
 
-#define apollo_UFCON_DEFAULT	(S3C2410_UFCON_FIFOMODE |	\
+#define APOLLO_UFCON_DEFAULT	(S3C2410_UFCON_FIFOMODE |	\
 				 S5PV210_UFCON_TXTRIG4 |	\
 				 S5PV210_UFCON_RXTRIG4)
 
@@ -75,23 +74,23 @@ static struct s3c2410_uartcfg apollo_uartcfgs[] __initdata = {
 	[0] = {
 		.hwport		= 0,
 		.flags		= 0,
-		.ucon		= apollo_UCON_DEFAULT,
-		.ulcon		= apollo_ULCON_DEFAULT,
-		.ufcon		= apollo_UFCON_DEFAULT,
+		.ucon		= APOLLO_UCON_DEFAULT,
+		.ulcon		= APOLLO_ULCON_DEFAULT,
+		.ufcon		= APOLLO_UFCON_DEFAULT,
 	},
 	[1] = {
 		.hwport		= 1,
 		.flags		= 0,
-		.ucon		= apollo_UCON_DEFAULT,
-		.ulcon		= apollo_ULCON_DEFAULT,
-		.ufcon		= apollo_UFCON_DEFAULT,
+		.ucon		= APOLLO_UCON_DEFAULT,
+		.ulcon		= APOLLO_ULCON_DEFAULT,
+		.ufcon		= APOLLO_UFCON_DEFAULT,
 	},
 	[2] = {
 		.hwport		= 2,
 		.flags		= 0,
-		.ucon		= apollo_UCON_DEFAULT,
-		.ulcon		= apollo_ULCON_DEFAULT,
-		.ufcon		= apollo_UFCON_DEFAULT,
+		.ucon		= APOLLO_UCON_DEFAULT,
+		.ulcon		= APOLLO_ULCON_DEFAULT,
+		.ufcon		= APOLLO_UFCON_DEFAULT,
 	},
 };
 
@@ -462,22 +461,9 @@ static struct platform_device *apollo_devices[] __initdata = {
 	&apollo_bml_device,
 };
 
-int apollo_gpio_init(void)
-{
-	//u32 err;
-
-	printk("%s: Initialising Apollo GPIOs\n", __func__);
-
-	s3c_gpio_cfgpin(S5P6442_GPH3(7), S3C_GPIO_SFN(0xf));
-	s3c_gpio_setpull(S5P6442_GPH3(7), S3C_GPIO_PULL_UP);
-
-	return 0;
-}
-
 static void __init apollo_machine_init(void)
 {
 	check_hw_rev_pin();
-	apollo_gpio_init();
 	s3c_i2c0_set_platdata(NULL);
 	s3c_i2c1_set_platdata(NULL);
 	s3c_i2c2_set_platdata(NULL);
@@ -501,10 +487,6 @@ static void __init apollo_machine_init(void)
 	printk("%s : lcd_id=%d\n", __func__, gpio_get_value(GPIO_LCD_ID));
 	printk("%s : uart_sel=%i\n", __func__, gpio_get_value(GPIO_UART_SEL));
 
-	printk("%s : but-vol-up=%i\n", __func__, gpio_get_value(S5P6442_GPH3(4)));
-	printk("%s : but-vol-dn=%i\n", __func__, gpio_get_value(S5P6442_GPH3(5)));
-	printk("%s : but-back=%i\n", __func__, gpio_get_value(S5P6442_GPH3(6)));
-	printk("%s : but-menu=%i\n", __func__, gpio_get_value(S5P6442_GPH3(7)));
 }
 
 static void __init apollo_fixup(struct tag *tags, char **cmdline,
