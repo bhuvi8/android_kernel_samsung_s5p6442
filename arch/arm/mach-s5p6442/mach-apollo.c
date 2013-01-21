@@ -51,6 +51,7 @@
 #include <plat/keypad.h>
 #include <plat/fb.h>
 #include <plat/regs-fb-v4.h>
+#include <plat/mfc.h>
 
 #include <media/s5p_fimc.h>
 
@@ -437,6 +438,9 @@ static struct platform_device *apollo_devices[] __initdata = {
 	&s5p_device_fimc2,
 	&s5p_device_jpeg,
 	&s3c_device_fb,
+	&s5p_device_mfc,
+	&s5p_device_mfc_l,
+	&s5p_device_mfc_r,
 
 	&s5p_device_onenand,
 	&apollo_bml_device,
