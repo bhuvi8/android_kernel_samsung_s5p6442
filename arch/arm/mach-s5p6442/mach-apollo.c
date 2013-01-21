@@ -341,6 +341,14 @@ static struct samsung_keypad_platdata apollo_keypad_pdata __initdata = {
 
 static struct gpio_keys_button apollo_gpio_keys_data[] = {
 	{
+		.gpio			= S5P6442_GPH2(6),
+		.code			= KEY_POWER,
+		.desc			= "Power",
+		.active_low		= 1,
+		.debounce_interval	= 5,
+		.type			= EV_KEY,
+		.wakeup			= 1,
+	}, {
 		.gpio			= S5P6442_GPH3(4),
 		.code			= KEY_VOLUMEUP,
 		.desc			= "Volume Up",
@@ -448,7 +456,7 @@ static struct platform_device *apollo_devices[] __initdata = {
 
 int apollo_gpio_init(void)
 {
-	u32 err;
+	//u32 err;
 
 	printk("%s: Initialising Apollo GPIOs\n", __func__);
 
