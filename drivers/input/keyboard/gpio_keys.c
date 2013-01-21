@@ -468,7 +468,6 @@ static int __devinit gpio_keys_setup_key(struct platform_device *pdev,
 			goto fail;
 		}
 		bdata->irq = irq;
-		printk("%s: gpio %i is IRQ %i\n", __func__, button->gpio, irq);
 
 		INIT_WORK(&bdata->work, gpio_keys_gpio_work_func);
 		setup_timer(&bdata->timer,

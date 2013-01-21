@@ -39,8 +39,8 @@ static struct resource s5p6442_pdma_resource[] = {
 		.flags = IORESOURCE_MEM,
 	},
 	[1] = {
-		.start	= IRQ_PDMA,
-		.end	= IRQ_PDMA,
+		.start	= IRQ_PDMA0,
+		.end	= IRQ_PDMA0,
 		.flags	= IORESOURCE_IRQ,
 	},
 };

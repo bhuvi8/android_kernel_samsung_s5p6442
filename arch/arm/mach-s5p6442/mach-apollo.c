@@ -232,7 +232,7 @@ static struct i2c_board_info apollo_i2c_devs4[] __initdata = {
 //	},
 	{
 		I2C_BOARD_INFO("max8998", 0xCC >> 1),
-		.irq = IRQ_EINT7,
+//		.irq = IRQ_EINT7,
 //		.platform_data = &apollo_max8998_pdata,
 	},
 	{
@@ -344,6 +344,14 @@ static struct gpio_keys_button apollo_gpio_keys_data[] = {
 		.gpio			= S5P6442_GPH2(6),
 		.code			= KEY_POWER,
 		.desc			= "Power",
+		.active_low		= 1,
+		.debounce_interval	= 5,
+		.type			= EV_KEY,
+		.wakeup			= 1,
+	}, {
+		.gpio			= S5P6442_GPH3(0),
+		.code			= KEY_HOME,
+		.desc			= "Home",
 		.active_low		= 1,
 		.debounce_interval	= 5,
 		.type			= EV_KEY,

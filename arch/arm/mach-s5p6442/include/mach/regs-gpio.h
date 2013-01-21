@@ -1,9 +1,9 @@
 /* linux/arch/arm/mach-s5p6442/include/mach/regs-gpio.h
  *
- * Copyright (c) 2009-2010 Samsung Electronics Co., Ltd.
+ * Copyright (c) 2010 Samsung Electronics Co., Ltd.
  *		http://www.samsung.com
  *
- * S5P64X0 - GPIO register definitions
+ * S5P6442 - GPIO (including EINT) register definitions
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 as
@@ -15,100 +15,27 @@
 
 #include <mach/map.h>
 
+#define S5P6442_EINT30CON		(S5P_VA_GPIO + 0xE00)
+#define S5P_EINT_CON(x)			(S5P6442_EINT30CON + ((x) * 0x4))
+
+#define S5P6442_EINT30FLTCON0		(S5P_VA_GPIO + 0xE80)
+#define S5P_EINT_FLTCON(x)		(S5P6442_EINT30FLTCON0 + ((x) * 0x4))
+
+#define S5P6442_EINT30MASK		(S5P_VA_GPIO + 0xF00)
+#define S5P_EINT_MASK(x)		(S5P6442_EINT30MASK + ((x) * 0x4))
+
+#define S5P6442_EINT30PEND		(S5P_VA_GPIO + 0xF40)
+#define S5P_EINT_PEND(x)		(S5P6442_EINT30PEND + ((x) * 0x4))
+
 #define EINT_REG_NR(x)			(EINT_OFFSET(x) >> 3)
 
 #define eint_irq_to_bit(irq)		(1 << (EINT_OFFSET(irq) & 0x7))
 
-/* Base addresses for each of the banks */
-
-#define S5P6442_GPA0_BASE		(S5P_VA_GPIO + 0x0000)
-#define S5P6442_GPA1_BASE		(S5P_VA_GPIO + 0x0020)
-#define S5P6442_GPB_BASE		(S5P_VA_GPIO + 0x0040)
-#define S5P6442_GPC0_BASE		(S5P_VA_GPIO + 0x0060)
-#define S5P6442_GPC1_BASE		(S5P_VA_GPIO + 0x0080)
-#define S5P6442_GPD0_BASE		(S5P_VA_GPIO + 0x00A0)
-#define S5P6442_GPD1_BASE		(S5P_VA_GPIO + 0x00C0)
-#define S5P6442_GPE0_BASE		(S5P_VA_GPIO + 0x00E0)
-#define S5P6442_GPE1_BASE		(S5P_VA_GPIO + 0x0100)
-#define S5P6442_GPF0_BASE		(S5P_VA_GPIO + 0x0120)
-#define S5P6442_GPF1_BASE		(S5P_VA_GPIO + 0x0140)
-#define S5P6442_GPF2_BASE		(S5P_VA_GPIO + 0x0160)
-#define S5P6442_GPF3_BASE		(S5P_VA_GPIO + 0x0180)
-#define S5P6442_GPG0_BASE		(S5P_VA_GPIO + 0x01A0)
-#define S5P6442_GPG1_BASE		(S5P_VA_GPIO + 0x01C0)
-#define S5P6442_GPG2_BASE		(S5P_VA_GPIO + 0x01E0)
-
-#define S5P6442_GPJ0_BASE		(S5P_VA_GPIO + 0x0200)
-#define S5P6442_GPJ1_BASE		(S5P_VA_GPIO + 0x0220)
-#define S5P6442_GPJ2_BASE		(S5P_VA_GPIO + 0x0240)
-#define S5P6442_GPJ3_BASE		(S5P_VA_GPIO + 0x0260)
-#define S5P6442_GPJ4_BASE		(S5P_VA_GPIO + 0x0280)
-
-#define S5P6442_GPH0_BASE		(S5P_VA_GPIO + 0x0C00)
-#define S5P6442_GPH1_BASE		(S5P_VA_GPIO + 0x0C20)
-#define S5P6442_GPH2_BASE		(S5P_VA_GPIO + 0x0C40)
-#define S5P6442_GPH3_BASE		(S5P_VA_GPIO + 0x0C60)
-
-#define S5P6442_MP01_BASE		(S5P_VA_GPIO + 0x02A0)
-#define S5P6442_MP02_BASE		(S5P_VA_GPIO + 0x02C0)
-#define S5P6442_MP03_BASE		(S5P_VA_GPIO + 0x02E0)
-#define S5P6442_MP04_BASE		(S5P_VA_GPIO + 0x0300)
-#define S5P6442_MP05_BASE		(S5P_VA_GPIO + 0x0320)
-#define S5P6442_MP06_BASE		(S5P_VA_GPIO + 0x0340)
-#define S5P6442_MP07_BASE		(S5P_VA_GPIO + 0x0360)
-
-#define S5P6442_MP10_BASE		(S5P_VA_GPIO + 0x0380)
-#define S5P6442_MP11_BASE		(S5P_VA_GPIO + 0x03A0)
-#define S5P6442_MP12_BASE		(S5P_VA_GPIO + 0x03C0)
-#define S5P6442_MP13_BASE		(S5P_VA_GPIO + 0x03E0)
-#define S5P6442_MP14_BASE		(S5P_VA_GPIO + 0x0400)
-#define S5P6442_MP15_BASE		(S5P_VA_GPIO + 0x0420)
-#define S5P6442_MP16_BASE		(S5P_VA_GPIO + 0x0440)
-#define S5P6442_MP17_BASE		(S5P_VA_GPIO + 0x0460)
-#define S5P6442_MP18_BASE		(S5P_VA_GPIO + 0x0480)
-
-#define S5P64X0_SPCON0			(S5P_VA_GPIO + 0x1A0)
-#define S5P64X0_SPCON0_LCD_SEL_MASK	(0x3 << 0)
-#define S5P64X0_SPCON0_LCD_SEL_RGB	(0x1 << 0)
-#define S5P64X0_SPCON1			(S5P_VA_GPIO + 0x2B0)
-
-#define S5P64X0_MEM0CONSLP0		(S5P_VA_GPIO + 0x1C0)
-#define S5P64X0_MEM0CONSLP1		(S5P_VA_GPIO + 0x1C4)
-#define S5P64X0_MEM0DRVCON		(S5P_VA_GPIO + 0x1D0)
-#define S5P64X0_MEM1DRVCON		(S5P_VA_GPIO + 0x1D4)
-
-#define S5P64X0_EINT12CON		(S5P_VA_GPIO + 0x200)
-#define S5P64X0_EINT12FLTCON		(S5P_VA_GPIO + 0x220)
-#define S5P64X0_EINT12MASK		(S5P_VA_GPIO + 0x240)
-
-/* External interrupt control registers for group0 */
-
-#define EINT0CON0_OFFSET		(0x900)
-#define EINT0FLTCON0_OFFSET		(0x910)
-#define EINT0FLTCON1_OFFSET		(0x914)
-#define EINT0MASK_OFFSET		(0x920)
-#define EINT0PEND_OFFSET		(0x924)
-
-#define S5P64X0_EINT0CON0		(S5P_VA_GPIO + EINT0CON0_OFFSET)
-#define S5P64X0_EINT0FLTCON0		(S5P_VA_GPIO + EINT0FLTCON0_OFFSET)
-#define S5P64X0_EINT0FLTCON1		(S5P_VA_GPIO + EINT0FLTCON1_OFFSET)
-#define S5P64X0_EINT0MASK		(S5P_VA_GPIO + EINT0MASK_OFFSET)
-#define S5P64X0_EINT0PEND		(S5P_VA_GPIO + EINT0PEND_OFFSET)
-
 #define EINT_MODE		S3C_GPIO_SFN(0xf)
 
-#define EINT_GPIO_0(x)			S5P6442_GPH0(x)
-#define EINT_GPIO_1(x)			S5P6442_GPH1(x)
-#define EINT_GPIO_2(x)			S5P6442_GPH2(x)
-#define EINT_GPIO_3(x)			S5P6442_GPH3(x)
-
-/* compatibility for plat-s5p/irq-pm.c */
-#define S5P_EINT_CON(x)			(S5P64X0_EINT0CON0 + ((x) * 0x4))
-#define S5P_EINT_FLTCON(x)		(S5P64X0_EINT0FLTCON0 + ((x) * 0x4))
-#define S5P_EINT_MASK(x)		(S5P64X0_EINT0MASK + ((x) * 0x4))
-#define S5P_EINT_PEND(x)		(S5P64X0_EINT0PEND + ((x) * 0x4))
-
-#define S5P64X0_SLPEN			(S5P_VA_GPIO + 0x930)
-#define S5P64X0_SLPEN_USE_xSLP		(1 << 0)
+#define EINT_GPIO_0(x)		S5P6442_GPH0(x)
+#define EINT_GPIO_1(x)		S5P6442_GPH1(x)
+#define EINT_GPIO_2(x)		S5P6442_GPH2(x)
+#define EINT_GPIO_3(x)		S5P6442_GPH3(x)
 
 #endif /* __ASM_ARCH_REGS_GPIO_H */
