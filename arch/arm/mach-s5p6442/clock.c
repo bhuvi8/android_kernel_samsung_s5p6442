@@ -306,14 +306,36 @@ static struct clk clk_hsmmc2 = {
 	.ctrlbit	= (1<<18),
 };
 
+static struct clk *clkset_group1_list[] = {
+	[0] = &clk_mout_mpll.clk,
+	[1] = &clk_mout_epll.clk,
+};
+
 static struct clk *clkset_group2_list[] = {
 	[6] = &clk_mout_mpll.clk,
 	[7] = &clk_mout_epll.clk,
 };
 
+static struct clksrc_sources clkset_group1 = {
+	.sources	= clkset_group1_list,
+	.nr_sources	= ARRAY_SIZE(clkset_group1_list),
+};
+
 static struct clksrc_sources clkset_group2 = {
 	.sources	= clkset_group2_list,
 	.nr_sources	= ARRAY_SIZE(clkset_group2_list),
+};
+
+static struct clksrc_clk clk_sclk_mfc = {
+	.clk		= {
+		.name		= "sclk_mfc",
+		.devname	= "s5p-mfc",
+		.enable		= s5p6442_clk_ip0_ctrl,
+		.ctrlbit	= (1 << 16),
+	},
+	.sources = &clkset_group1,
+	.reg_src = { .reg = S5P_CLK_SRC2, .shift = 4, .size = 2 },
+	.reg_div = { .reg = S5P_CLK_DIV2, .shift = 4, .size = 4 },
 };
 
 static struct clksrc_clk clk_sclk_mmc0 = {
@@ -362,7 +384,10 @@ static struct clksrc_clk *init_parents[] = {
 	&clk_mout_d0sync,
 	&clk_mout_d1,
 	&clk_mout_d1sync,
+	&clk_sclk_mfc,
 	&clk_sclk_mmc0,
+	&clk_sclk_mmc1,
+	&clk_sclk_mmc2,
 };
 
 void __init_or_cpufreq s5p6442_setup_clocks(void)
@@ -556,6 +581,7 @@ static struct clk *clks[] __initdata = {
 };
 
 static struct clksrc_clk *clksrc_cdev[] = {
+	&clk_sclk_mfc,
 	&clk_sclk_mmc0,
 	&clk_sclk_mmc1,
 	&clk_sclk_mmc2,
