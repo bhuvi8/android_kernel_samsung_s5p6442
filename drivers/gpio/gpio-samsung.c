@@ -1634,41 +1634,6 @@ static struct samsung_gpio_chip s5p6442_gpios_4bit[] = {
 			.label	= "GPG2",
 		},
 	}, {
-		.base	= S5P6442_GPH0_BASE,
-		.config	= &s5p6442_gpio_cfg,
-		.chip	= {
-			.base	= S5P6442_GPH0(0),
-			.ngpio	= S5P6442_GPIO_H0_NR,
-			.label	= "GPH0",
-		},
-	}, {
-		.base	= S5P6442_GPH1_BASE,
-		.config	= &s5p6442_gpio_cfg,
-		.chip	= {
-			.base	= S5P6442_GPH1(0),
-			.ngpio	= S5P6442_GPIO_H1_NR,
-			.label	= "GPH1",
-			.to_irq	= samsung_gpiolib_to_irq,
-		},
-	}, {
-		.base	= S5P6442_GPH2_BASE,
-		.config	= &s5p6442_gpio_cfg,
-		.chip	= {
-			.base	= S5P6442_GPH2(0),
-			.ngpio	= S5P6442_GPIO_H2_NR,
-			.label	= "GPH2",
-			.to_irq	= samsung_gpiolib_to_irq,
-		},
-	}, {
-		.base	= S5P6442_GPH3_BASE,
-		.config	= &s5p6442_gpio_cfg,
-		.chip	= {
-			.base	= S5P6442_GPH3(0),
-			.ngpio	= S5P6442_GPIO_H3_NR,
-			.label	= "GPH3",
-			.to_irq	= samsung_gpiolib_to_irq,
-		},
-	}, {
 		.base	= S5P6442_GPJ0_BASE,
 		.config	= &s5p6442_gpio_cfg,
 		.chip	= {
@@ -1836,7 +1801,44 @@ static struct samsung_gpio_chip s5p6442_gpios_4bit[] = {
 			.ngpio	= S5P6442_GPIO_MP18_NR,
 			.label	= "MP18",
 		},
-	}
+	}, {
+		.base	= (S5P_VA_GPIO + 0xC00),
+		.irq_base = IRQ_EINT(0),
+		.chip	= {
+			.base	= S5P6442_GPH0(0),
+			.ngpio	= S5P6442_GPIO_H0_NR,
+			.label	= "GPH0",
+			.to_irq = samsung_gpiolib_to_irq,
+		},
+	}, {
+		.base	= (S5P_VA_GPIO + 0xC20),
+		.irq_base = IRQ_EINT(8),
+		.chip	= {
+			.base	= S5P6442_GPH1(0),
+			.ngpio	= S5P6442_GPIO_H1_NR,
+			.label	= "GPH1",
+			.to_irq = samsung_gpiolib_to_irq,
+		},
+	}, {
+		.base	= (S5P_VA_GPIO + 0xC40),
+		.irq_base = IRQ_EINT(16),
+		.chip	= {
+			.base	= S5P6442_GPH2(0),
+			.ngpio	= S5P6442_GPIO_H2_NR,
+			.label	= "GPH2",
+			.to_irq = samsung_gpiolib_to_irq,
+		},
+	}, {
+		.base	= (S5P_VA_GPIO + 0xC60),
+		.irq_base = IRQ_EINT(24),
+		.chip	= {
+			.base	= S5P6442_GPH3(0),
+			.ngpio	= S5P6442_GPIO_H3_NR,
+			.label	= "GPH3",
+			.to_irq = samsung_gpiolib_to_irq,
+		},
+	},
+
 #endif
 };
 

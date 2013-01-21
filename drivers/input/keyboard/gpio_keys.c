@@ -378,6 +378,7 @@ static void gpio_keys_irq_timer(unsigned long _data)
 
 	spin_lock_irqsave(&bdata->lock, flags);
 	if (bdata->key_pressed) {
+		printk("%s: pressed %i", __func__, EV_KEY);
 		input_event(input, EV_KEY, bdata->button->code, 0);
 		input_sync(input);
 		bdata->key_pressed = false;
@@ -467,6 +468,7 @@ static int __devinit gpio_keys_setup_key(struct platform_device *pdev,
 			goto fail;
 		}
 		bdata->irq = irq;
+		printk("%s: gpio %i is IRQ %i\n", __func__, button->gpio, irq);
 
 		INIT_WORK(&bdata->work, gpio_keys_gpio_work_func);
 		setup_timer(&bdata->timer,

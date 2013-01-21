@@ -18,6 +18,7 @@
 #include <linux/serial_core.h>
 #include <linux/i2c.h>
 #include <linux/i2c-gpio.h>
+#include <linux/mfd/max8998.h>
 #include <linux/input.h>
 #include <linux/input/matrix_keypad.h>
 #include <linux/gpio_keys.h>
@@ -221,6 +222,20 @@ static struct i2c_board_info apollo_i2c_devs0[] __initdata = {
 	{ I2C_BOARD_INFO("wm8994", 0x1b), },
 };
 
+static struct i2c_board_info apollo_i2c_devs4[] __initdata = {
+//	{ 
+//		I2C_BOARD_INFO("Max 8998 I2C", (0x0c>>1)), 
+//	},
+	{
+		I2C_BOARD_INFO("max8998", 0xCC >> 1),
+		.irq = IRQ_EINT7,
+//		.platform_data = &apollo_max8998_pdata,
+	},
+	{
+		I2C_BOARD_INFO("fsa9480", (0x4A >> 1)),
+	},
+};
+
 static struct i2c_gpio_platform_data i2c3_platdata = {
         .sda_pin                = GPIO_AP_SDA,
         .scl_pin                = GPIO_AP_SCL,
@@ -237,12 +252,8 @@ static struct platform_device i2c3_gpio = {
 };
 
 static struct i2c_gpio_platform_data i2c4_platdata = {
-        .sda_pin                = GPIO_AP_PMIC_SDA,
-        .scl_pin                = GPIO_AP_PMIC_SCL,
-        .udelay                 = 2,    /* 250KHz */
-        .sda_is_open_drain      = 0,
-        .scl_is_open_drain      = 0,
-        .scl_is_output_only     = 1,
+	.sda_pin	= S5P6442_GPJ4(0),	/* XMSMCSN */
+	.scl_pin	= S5P6442_GPJ4(3),	/* XMSMIRQN */
 };
 
 static struct platform_device i2c4_gpio = {
@@ -406,14 +417,29 @@ static struct platform_device *apollo_devices[] __initdata = {
 	&apollo_bml_device,
 };
 
+int apollo_gpio_init(void)
+{
+	u32 err;
+
+	printk("%s: Initialising Apollo GPIOs\n", __func__);
+
+	s3c_gpio_cfgpin(S5P6442_GPH3(7), S3C_GPIO_SFN(0xf));
+	s3c_gpio_setpull(S5P6442_GPH3(7), S3C_GPIO_PULL_UP);
+
+	return 0;
+}
+
 static void __init apollo_machine_init(void)
 {
 	check_hw_rev_pin();
+	apollo_gpio_init();
 	s3c_i2c0_set_platdata(NULL);
 	s3c_i2c1_set_platdata(NULL);
 	s3c_i2c2_set_platdata(NULL);
 	i2c_register_board_info(0, apollo_i2c_devs0,
 			ARRAY_SIZE(apollo_i2c_devs0));
+	//i2c_register_board_info(4, apollo_i2c_devs4,
+	//		ARRAY_SIZE(apollo_i2c_devs4));
 
 	s3c_sdhci0_set_platdata(&apollo_hsmmc0_pdata);
 	s3c_sdhci1_set_platdata(&apollo_hsmmc1_pdata);
