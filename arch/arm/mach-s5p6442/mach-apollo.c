@@ -133,6 +133,302 @@ static struct platform_device apollo_bml_device = {
 	},
 };
 
+/* MAX8998 regulators */
+#if defined(CONFIG_REGULATOR_MAX8998) || defined(CONFIG_REGULATOR_MAX8998_MODULE)
+
+static struct regulator_consumer_supply apollo_ldo3_consumers[] = {
+	REGULATOR_SUPPLY("vusb_a", "s3c-hsotg"),
+};
+
+static struct regulator_consumer_supply apollo_ldo5_consumers[] = {
+	REGULATOR_SUPPLY("vmmc", "s3c-sdhci.0"),
+};
+
+static struct regulator_consumer_supply apollo_ldo8_consumers[] = {
+	REGULATOR_SUPPLY("vusb_d", "s3c-hsotg"),
+	REGULATOR_SUPPLY("vdd33a_dac", "s5p-sdo"),
+};
+
+static struct regulator_consumer_supply apollo_ldo11_consumers[] = {
+	REGULATOR_SUPPLY("vddio", "0-0030"), /* "CAM_IO_2.8V" */
+};
+
+static struct regulator_consumer_supply apollo_ldo13_consumers[] = {
+	REGULATOR_SUPPLY("vdda", "0-0030"), /* "CAM_A_2.8V" */
+};
+
+static struct regulator_consumer_supply apollo_ldo14_consumers[] = {
+	REGULATOR_SUPPLY("vdd_core", "0-0030"), /* "CAM_CIF_1.8V" */
+};
+
+static struct regulator_init_data apollo_ldo2_data = {
+	.constraints	= {
+		.name		= "VALIVE_1.1V",
+		.min_uV		= 1100000,
+		.max_uV		= 1100000,
+		.apply_uV	= 1,
+		.always_on	= 1,
+		.state_mem	= {
+			.enabled = 1,
+		},
+	},
+};
+
+static struct regulator_init_data apollo_ldo3_data = {
+	.constraints	= {
+		.name		= "VUSB+MIPI_1.1V",
+		.min_uV		= 1100000,
+		.max_uV		= 1100000,
+		.apply_uV	= 1,
+		.valid_ops_mask	= REGULATOR_CHANGE_STATUS,
+	},
+	.num_consumer_supplies = ARRAY_SIZE(apollo_ldo3_consumers),
+	.consumer_supplies = apollo_ldo3_consumers,
+};
+
+static struct regulator_init_data apollo_ldo4_data = {
+	.constraints	= {
+		.name		= "VDAC_3.3V",
+		.min_uV		= 3300000,
+		.max_uV		= 3300000,
+		.apply_uV	= 1,
+	},
+};
+
+static struct regulator_init_data apollo_ldo5_data = {
+	.constraints	= {
+		.name		= "VTF_2.8V",
+		.min_uV		= 2800000,
+		.max_uV		= 2800000,
+		.apply_uV	= 1,
+		.valid_ops_mask	= REGULATOR_CHANGE_STATUS,
+	},
+	.num_consumer_supplies = ARRAY_SIZE(apollo_ldo5_consumers),
+	.consumer_supplies = apollo_ldo5_consumers,
+};
+
+static struct regulator_init_data apollo_ldo6_data = {
+	.constraints	= {
+		.name		= "VCC_3.3V",
+		.min_uV		= 3300000,
+		.max_uV		= 3300000,
+		.apply_uV	= 1,
+	},
+};
+
+static struct regulator_init_data apollo_ldo7_data = {
+	.constraints	= {
+		.name		= "VLCD_1.8V",
+		.min_uV		= 1800000,
+		.max_uV		= 1800000,
+		.apply_uV	= 1,
+		.always_on	= 1,
+	},
+};
+
+static struct regulator_init_data apollo_ldo8_data = {
+	.constraints	= {
+		.name		= "VUSB+VADC_3.3V",
+		.min_uV		= 3300000,
+		.max_uV		= 3300000,
+		.apply_uV	= 1,
+		.valid_ops_mask	= REGULATOR_CHANGE_STATUS,
+	},
+	.num_consumer_supplies = ARRAY_SIZE(apollo_ldo8_consumers),
+	.consumer_supplies = apollo_ldo8_consumers,
+};
+
+static struct regulator_init_data apollo_ldo9_data = {
+	.constraints	= {
+		.name		= "VCC+VCAM_2.8V",
+		.min_uV		= 2800000,
+		.max_uV		= 2800000,
+		.apply_uV	= 1,
+	},
+};
+
+static struct regulator_init_data apollo_ldo10_data = {
+	.constraints	= {
+		.name		= "VPLL_1.1V",
+		.min_uV		= 1100000,
+		.max_uV		= 1100000,
+		.apply_uV	= 1,
+		.boot_on	= 1,
+	},
+};
+
+static struct regulator_init_data apollo_ldo11_data = {
+	.constraints	= {
+		.name		= "CAM_IO_2.8V",
+		.min_uV		= 2800000,
+		.max_uV		= 2800000,
+		.apply_uV	= 1,
+		.valid_ops_mask	= REGULATOR_CHANGE_STATUS,
+	},
+	.num_consumer_supplies	= ARRAY_SIZE(apollo_ldo11_consumers),
+	.consumer_supplies	= apollo_ldo11_consumers,
+};
+
+static struct regulator_init_data apollo_ldo12_data = {
+	.constraints	= {
+		.name		= "CAM_ISP_1.2V",
+		.min_uV		= 1200000,
+		.max_uV		= 1200000,
+		.apply_uV	= 1,
+	},
+};
+
+static struct regulator_init_data apollo_ldo13_data = {
+	.constraints	= {
+		.name		= "CAM_A_2.8V",
+		.min_uV		= 2800000,
+		.max_uV		= 2800000,
+		.apply_uV	= 1,
+		.valid_ops_mask	= REGULATOR_CHANGE_STATUS,
+	},
+	.num_consumer_supplies	= ARRAY_SIZE(apollo_ldo13_consumers),
+	.consumer_supplies	= apollo_ldo13_consumers,
+};
+
+static struct regulator_init_data apollo_ldo14_data = {
+	.constraints	= {
+		.name		= "CAM_CIF_1.8V",
+		.min_uV		= 1800000,
+		.max_uV		= 1800000,
+		.apply_uV	= 1,
+		.valid_ops_mask	= REGULATOR_CHANGE_STATUS,
+	},
+	.num_consumer_supplies	= ARRAY_SIZE(apollo_ldo14_consumers),
+	.consumer_supplies	= apollo_ldo14_consumers,
+};
+
+static struct regulator_init_data apollo_ldo15_data = {
+	.constraints	= {
+		.name		= "CAM_AF_3.3V",
+		.min_uV		= 3300000,
+		.max_uV		= 3300000,
+		.apply_uV	= 1,
+	},
+};
+
+static struct regulator_init_data apollo_ldo16_data = {
+	.constraints	= {
+		.name		= "VMIPI_1.8V",
+		.min_uV		= 1800000,
+		.max_uV		= 1800000,
+		.apply_uV	= 1,
+	},
+};
+
+static struct regulator_init_data apollo_ldo17_data = {
+	.constraints	= {
+		.name		= "VCC_3.0V_LCD",
+		.min_uV		= 3000000,
+		.max_uV		= 3000000,
+		.apply_uV	= 1,
+		.always_on	= 1,
+	},
+};
+
+/* BUCK */
+static struct regulator_consumer_supply buck1_consumer =
+	REGULATOR_SUPPLY("vddarm", NULL);
+
+static struct regulator_consumer_supply buck2_consumer =
+	REGULATOR_SUPPLY("vddint", NULL);
+
+static struct regulator_consumer_supply buck3_consumer =
+	REGULATOR_SUPPLY("vdet", "s5p-sdo");
+
+
+static struct regulator_init_data apollo_buck1_data = {
+	.constraints	= {
+		.name		= "VARM_1.2V",
+		.min_uV		= 1200000,
+		.max_uV		= 1200000,
+		.apply_uV	= 1,
+		.valid_ops_mask	= REGULATOR_CHANGE_VOLTAGE |
+				  REGULATOR_CHANGE_STATUS,
+	},
+	.num_consumer_supplies	= 1,
+	.consumer_supplies	= &buck1_consumer,
+};
+
+static struct regulator_init_data apollo_buck2_data = {
+	.constraints	= {
+		.name		= "VINT_1.2V",
+		.min_uV		= 1200000,
+		.max_uV		= 1200000,
+		.apply_uV	= 1,
+		.valid_ops_mask	= REGULATOR_CHANGE_VOLTAGE |
+				  REGULATOR_CHANGE_STATUS,
+	},
+	.num_consumer_supplies	= 1,
+	.consumer_supplies	= &buck2_consumer,
+};
+
+static struct regulator_init_data apollo_buck3_data = {
+	.constraints	= {
+		.name		= "VCC_1.8V",
+		.min_uV		= 1800000,
+		.max_uV		= 1800000,
+		.apply_uV	= 1,
+		.state_mem	= {
+			.enabled = 1,
+		},
+	},
+	.num_consumer_supplies	= 1,
+	.consumer_supplies	= &buck3_consumer,
+};
+
+static struct regulator_init_data apollo_buck4_data = {
+	.constraints	= {
+		.name		= "CAM_CORE_1.2V",
+		.min_uV		= 1200000,
+		.max_uV		= 1200000,
+		.apply_uV	= 1,
+		.always_on	= 1,
+	},
+};
+
+static struct max8998_regulator_data apollo_regulators[] = {
+	{ MAX8998_LDO2,  &apollo_ldo2_data },
+	{ MAX8998_LDO3,  &apollo_ldo3_data },
+	{ MAX8998_LDO4,  &apollo_ldo4_data },
+	{ MAX8998_LDO5,  &apollo_ldo5_data },
+	{ MAX8998_LDO6,  &apollo_ldo6_data },
+	{ MAX8998_LDO7,  &apollo_ldo7_data },
+	{ MAX8998_LDO8,  &apollo_ldo8_data },
+	{ MAX8998_LDO9,  &apollo_ldo9_data },
+	{ MAX8998_LDO10, &apollo_ldo10_data },
+	{ MAX8998_LDO11, &apollo_ldo11_data },
+	{ MAX8998_LDO12, &apollo_ldo12_data },
+	{ MAX8998_LDO13, &apollo_ldo13_data },
+	{ MAX8998_LDO14, &apollo_ldo14_data },
+	{ MAX8998_LDO15, &apollo_ldo15_data },
+	{ MAX8998_LDO16, &apollo_ldo16_data },
+	{ MAX8998_LDO17, &apollo_ldo17_data },
+	{ MAX8998_BUCK1, &apollo_buck1_data },
+	{ MAX8998_BUCK2, &apollo_buck2_data },
+	{ MAX8998_BUCK3, &apollo_buck3_data },
+	{ MAX8998_BUCK4, &apollo_buck4_data },
+};
+
+static struct max8998_platform_data apollo_max8998_pdata = {
+	.num_regulators	= ARRAY_SIZE(apollo_regulators),
+	.regulators	= apollo_regulators,
+	.buck1_set1	= S5P6442_GPH0(2),
+	.buck1_set2	= S5P6442_GPH0(3),
+	.buck2_set3	= S5P6442_GPH0(4),
+	.buck1_voltage1	= 1200000,
+	.buck1_voltage2	= 1200000,
+	.buck1_voltage3	= 1200000,
+	.buck1_voltage4	= 1200000,
+	.buck2_voltage1	= 1200000,
+	.buck2_voltage2	= 1200000,
+};
+#endif
+
 static int apollo_hw_rev_pin_value = -1;
 
 static void check_hw_rev_pin(void)
@@ -226,19 +522,40 @@ static struct i2c_board_info apollo_i2c_devs0[] __initdata = {
 	{ I2C_BOARD_INFO("wm8994", 0x1b), },
 };
 
-static struct i2c_board_info apollo_i2c_devs4[] __initdata = {
-//	{ 
-//		I2C_BOARD_INFO("Max 8998 I2C", (0x0c>>1)), 
-//	},
-	{
-		I2C_BOARD_INFO("max8998", 0xCC >> 1),
-//		.irq = IRQ_EINT7,
-//		.platform_data = &apollo_max8998_pdata,
-	},
-	{
-		I2C_BOARD_INFO("fsa9480", (0x4A >> 1)),
+static struct i2c_gpio_platform_data apollo_i2c_gpio_pmic_data = {
+	.sda_pin	= S5P6442_GPJ4(0),	/* XMSMCSN */
+	.scl_pin	= S5P6442_GPJ4(3),	/* XMSMIRQN */
+};
+
+static struct platform_device apollo_i2c_gpio_pmic = {
+	.name		= "i2c-gpio",
+	.id		= 4,
+	.dev		= {
+		.platform_data	= &apollo_i2c_gpio_pmic_data,
 	},
 };
+
+static struct i2c_board_info i2c_gpio_pmic_devs[] __initdata = {
+#if defined(CONFIG_REGULATOR_MAX8998) || defined(CONFIG_REGULATOR_MAX8998_MODULE)
+	{
+		/* 0xCC when SRAD = 0 */
+		I2C_BOARD_INFO("max8998", 0xCC >> 1),
+		.platform_data = &apollo_max8998_pdata,
+	},
+#endif
+};
+
+static void __init apollo_pmic_init(void)
+{
+	/* AP_PMIC_IRQ: EINT7 */
+	s3c_gpio_cfgpin(S5P6442_GPH0(7), S3C_GPIO_SFN(0xf));
+	s3c_gpio_setpull(S5P6442_GPH0(7), S3C_GPIO_PULL_UP);
+
+	/* nPower: EINT22 */
+	s3c_gpio_cfgpin(S5P6442_GPH2(6), S3C_GPIO_SFN(0xf));
+	s3c_gpio_setpull(S5P6442_GPH2(6), S3C_GPIO_PULL_UP);
+}
+
 
 static struct i2c_gpio_platform_data i2c3_platdata = {
         .sda_pin                = GPIO_AP_SDA,
@@ -253,17 +570,6 @@ static struct platform_device i2c3_gpio = {
         .name                           = "i2c-gpio",
         .id                                     = 3,
         .dev.platform_data      = &i2c3_platdata,
-};
-
-static struct i2c_gpio_platform_data i2c4_platdata = {
-	.sda_pin	= S5P6442_GPJ4(0),	/* XMSMCSN */
-	.scl_pin	= S5P6442_GPJ4(3),	/* XMSMIRQN */
-};
-
-static struct platform_device i2c4_gpio = {
-        .name                           = "i2c-gpio",
-        .id                                     = 4,
-        .dev.platform_data      = &i2c4_platdata,
 };
 
 static struct i2c_gpio_platform_data i2c7_platdata = {
@@ -432,10 +738,11 @@ static struct platform_device *apollo_devices[] __initdata = {
 	&s3c_device_i2c1,
 	&s3c_device_i2c2,
 	&i2c3_gpio,
-	&i2c4_gpio,
+	&apollo_i2c_gpio_pmic,
 	&i2c7_gpio,
 	&i2c8_gpio,
 	&i2c9_gpio,
+
 
 	&samsung_asoc_dma,
 	&s5p6442_device_iis0,
@@ -470,8 +777,10 @@ static void __init apollo_machine_init(void)
 	s3c_i2c2_set_platdata(NULL);
 	i2c_register_board_info(0, apollo_i2c_devs0,
 			ARRAY_SIZE(apollo_i2c_devs0));
-	//i2c_register_board_info(4, apollo_i2c_devs4,
-	//		ARRAY_SIZE(apollo_i2c_devs4));
+
+	apollo_pmic_init();
+	i2c_register_board_info(4, i2c_gpio_pmic_devs,
+			ARRAY_SIZE(i2c_gpio_pmic_devs));
 
 	s3c_sdhci0_set_platdata(&apollo_hsmmc0_pdata);
 	s3c_sdhci1_set_platdata(&apollo_hsmmc1_pdata);
