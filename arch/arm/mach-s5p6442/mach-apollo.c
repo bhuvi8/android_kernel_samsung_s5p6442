@@ -24,11 +24,6 @@
 #include <linux/serial_core.h>
 #include <linux/types.h>
 
-#include <linux/mtd/bml.h>
-#include <linux/mtd/mtd.h>
-#include <linux/mtd/onenand.h>
-#include <linux/mtd/partitions.h>
-
 #include <asm/mach/arch.h>
 #include <asm/mach/map.h>
 #include <asm/setup.h>
@@ -102,34 +97,13 @@ static struct s3c_sdhci_platdata apollo_hsmmc0_pdata __initdata = {
 };
 
 static struct s3c_sdhci_platdata apollo_hsmmc1_pdata __initdata = {
+	.max_width		= 4,
 	.cd_type		= S3C_SDHCI_CD_INTERNAL,
-	.clk_type		= S3C_SDHCI_CLK_DIV_EXTERNAL,
-	.max_width		= 8,
 };
 
 static struct s3c_sdhci_platdata apollo_hsmmc2_pdata __initdata = {
 	.max_width		= 4,
 	.cd_type		= S3C_SDHCI_CD_NONE,
-};
-
-static struct bml_partition apollo_bml_partitions[] = {
-	{
-		.name		= "kernel",
-		.offset		= (40 * SZ_256K),
-	}
-};
-
-static struct bml_platform_data apollo_bml_pdata = {
-	.parts			= apollo_bml_partitions,
-	.nr_parts		= ARRAY_SIZE(apollo_bml_partitions),
-};
-
-static struct platform_device apollo_bml_device = {
-	.name			= "mtd-bml",
-	.id			= -1,
-	.dev			= {
-				.platform_data = &apollo_bml_pdata,
-	},
 };
 
 /* MAX8998 regulators */
@@ -765,7 +739,6 @@ static struct platform_device *apollo_devices[] __initdata = {
 	&s5p_device_mfc_r,
 
 	&s5p_device_onenand,
-	&apollo_bml_device,
 };
 
 static void __init apollo_machine_init(void)
