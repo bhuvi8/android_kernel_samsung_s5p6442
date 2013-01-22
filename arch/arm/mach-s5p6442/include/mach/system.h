@@ -13,11 +13,14 @@
 #ifndef __ASM_ARCH_SYSTEM_H
 #define __ASM_ARCH_SYSTEM_H __FILE__
 
-#include <plat/system-reset.h>
-
 static void arch_idle(void)
 {
 	/* nothing here yet */
+}
+
+void s5p6442_restart(char mode, const char *cmd)
+{
+	__raw_writel(0x1, S5P_SWRESET);
 }
 
 #endif /* __ASM_ARCH_SYSTEM_H */

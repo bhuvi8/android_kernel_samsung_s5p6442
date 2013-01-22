@@ -39,6 +39,7 @@
 #include <mach/map.h>
 #include <mach/regs-clock.h>
 #include <mach/regs-gpio.h>
+#include <mach/system.h>
 
 #include <plat/cpu.h>
 #include <plat/devs.h>
@@ -510,5 +511,6 @@ MACHINE_START(APOLLO, "APOLLO")
 	.map_io		= apollo_map_io,
 	.init_machine	= apollo_machine_init,
 	.timer		= &s5p_timer,
+	.restart	= s5p6442_restart,
 MACHINE_END
 
