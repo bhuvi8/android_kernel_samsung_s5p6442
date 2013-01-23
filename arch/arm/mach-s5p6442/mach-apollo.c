@@ -829,7 +829,7 @@ static void __init apollo_fixup(struct tag *tags, char **cmdline,
 	mi->bank[1].size = PHYS_SIZE_ONEDRAM;
 }
 
-MACHINE_START(APOLLO, "APOLLO")
+MACHINE_START(APOLLO, "apollo")
 	.atag_offset	= 0x100,
 
 	.fixup		= apollo_fixup,
