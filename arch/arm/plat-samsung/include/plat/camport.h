@@ -22,6 +22,7 @@ enum s5p_camport_id {
  * FIMC entities are allowed to be attached to a single port simultaneously.
  * These functions are to be used in the board setup code.
  */
+int s5p6442_fimc_setup_gpio(void);
 int s5pv210_fimc_setup_gpio(enum s5p_camport_id id);
 int exynos4_fimc_setup_gpio(enum s5p_camport_id id);
 

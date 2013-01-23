@@ -36,6 +36,7 @@
 #include <mach/regs-gpio.h>
 #include <mach/system.h>
 
+#include <plat/camport.h>
 #include <plat/cpu.h>
 #include <plat/devs.h>
 #include <plat/fb.h>
@@ -51,6 +52,8 @@
 #include <plat/sdhci.h>
 
 #include <media/s5p_fimc.h>
+#include <media/s5k4ca_platform.h>
+#include <media/v4l2-mediabus.h>
 
 /* Following are default values for UCON, ULCON and UFCON UART registers */
 #define APOLLO_UCON_DEFAULT	(S3C2410_UCON_TXILEVEL |	\
@@ -684,6 +687,44 @@ static struct platform_device apollo_gpio_keys = {
 				}
 };
 
+static struct s5k4ca_platform_data s5k4ca_pdata = {
+	.default_width = 1024,
+	.default_height = 768,
+	.pixelformat = V4L2_PIX_FMT_UYVY,
+	.freq = 24000000,
+	.is_mipi = 0,
+};
+
+static struct i2c_board_info s5k4ca_board_info = {
+	I2C_BOARD_INFO("s5k4ca", 0x60 >> 1),
+	.platform_data = &s5k4ca_pdata,
+};
+
+static struct s5p_fimc_isp_info apollo_camera_sensors[] = {
+	{
+		.mux_id		= 0,
+		.flags		= V4L2_MBUS_PCLK_SAMPLE_FALLING |
+				  V4L2_MBUS_VSYNC_ACTIVE_LOW,
+		.bus_type	= FIMC_ITU_601,
+		.board_info	= &s5k4ca_board_info,
+		.i2c_bus_num	= 0,
+		.clk_frequency	= 16000000UL,
+	},
+};
+
+static struct s5p_platform_fimc apollo_fimc_md_platdata __initdata = {
+	.isp_info	= apollo_camera_sensors,
+	.num_clients	= ARRAY_SIZE(apollo_camera_sensors),
+};
+
+static void apollo_camera_init(void)
+{
+	s5p6442_fimc_setup_gpio();
+
+	/* Set max driver strength on CAM_A_CLKOUT pin. */
+	s5p_gpio_set_drvstr(S5P6442_GPE1(3), S5P_GPIO_DRVSTR_LV4);
+}
+
 static struct s3c_fb_pd_win apollo_fb_win0 = {
 	.win_mode = {
 		.left_margin	= 13,
@@ -732,6 +773,7 @@ static struct platform_device *apollo_devices[] __initdata = {
 	&s5p_device_fimc0,
 	&s5p_device_fimc1,
 	&s5p_device_fimc2,
+	&s5p_device_fimc_md,
 	&s5p_device_jpeg,
 	&s3c_device_fb,
 	&s5p_device_mfc,
@@ -757,6 +799,11 @@ static void __init apollo_machine_init(void)
 	s3c_sdhci0_set_platdata(&apollo_hsmmc0_pdata);
 	s3c_sdhci1_set_platdata(&apollo_hsmmc1_pdata);
 	s3c_sdhci2_set_platdata(&apollo_hsmmc2_pdata);
+
+	s3c_set_platdata(&apollo_fimc_md_platdata, sizeof(apollo_fimc_md_platdata),
+			 &s5p_device_fimc_md);
+
+	apollo_camera_init();
 
 	s3c_fb_set_platdata(&apollo_lcd0_pdata);
 
