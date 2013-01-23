@@ -10,13 +10,52 @@
 if ARCH_S5P6442
 
 config CPU_S5P6442
-	bool
+	bool "Enable S5P6442 CPU support"
 	select S3C_PL330_DMA
-	select S5P_PM
+	select S5P_PM if PM
+	select S5P_SLEEP if PM
 	select S5P_HRT
 	select S5P_EXT_INT
 	help
 	  Enable S5P6442 CPU support
+
+config S5P6442_SETUP_I2C1
+	bool "S5P6442 I2C Bus 1"
+	help
+	  Common setup code for i2c bus 1.
+
+config S5P6442_SETUP_I2C2
+	bool "S5P6442 I2C Bus 2"
+	help
+	  Common setup code for i2c bus 2.
+
+config S5P6442_SETUP_FB_24BPP
+	bool "S5P6442 Framebuffer"
+	help
+          Common setup code for S5P6442 with an 24bpp RGB display helper.
+
+config S5P6442_SETUP_KEYPAD
+	bool "S5P6442 Keypad"
+	help
+	  Common setup code for keypad.
+
+config S5P6442_SETUP_SDHCI
+        bool "S5P6442 SDHCI"
+        select S5P6442_SETUP_SDHCI_GPIO
+        help
+          Internal helper functions for S5P6442 based SDHCI systems
+
+config S5P6442_SETUP_FIMC
+	bool "S5P6442 FIMC"
+	help
+	  Common setup code for the camera interfaces.
+
+config S5P6442_SETUP_USB_PHY
+	bool "S5P6442 USB PHY"
+	help
+	  Common setup code for USB PHY controller
+
+menu "S5P6442 Machines"
 
 config MACH_SMDK6442
 	bool "SMDK6442"
@@ -26,7 +65,7 @@ config MACH_SMDK6442
 	  Machine support for Samsung SMDK6442
 	  
 config MACH_APOLLO
-	bool "APOLLO"
+	bool "Samsung Galaxy i580x (APOLLO)"
 	select CPU_S5P6442
 	select S5P_GPIO_INT
 	select S3C_DEV_FB
@@ -53,25 +92,7 @@ config MACH_APOLLO
 	help
 	  Machine support for the Samsung Galaxy Apollo
 
-if MACH_APOLLO
-menu "APOLLO options"
-
-	config APOLLO_MTD_SYSTEM_SZ
-		int "System partition size (256KB blocks)"
-		depends on MTD
-		default "880"
-
-	config APOLLO_MTD_DATA_SZ
-		int "Data partition size (256KB blocks)"
-		depends on MTD
-		default "810"
-
-	config APOLLO_MTD_CACHE_SZ
-		int "Cache partition size (256KB blocks)"
-		depends on MTD
-		default "152"
-
 endmenu
-endif
 
 endif
+
