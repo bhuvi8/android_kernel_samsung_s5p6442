@@ -11,6 +11,7 @@
  * published by the Free Software Foundation.
 */
 
+#include <linux/delay.h>
 #include <linux/fb.h>
 #include <linux/gpio.h>
 #include <linux/gpio_keys.h>
@@ -22,6 +23,7 @@
 #include <linux/kernel.h>
 #include <linux/mfd/max8998.h>
 #include <linux/serial_core.h>
+#include <linux/switch.h>
 #include <linux/types.h>
 
 #include <asm/mach/arch.h>
@@ -54,6 +56,12 @@
 #include <media/s5p_fimc.h>
 #include <media/s5k4ca_platform.h>
 #include <media/v4l2-mediabus.h>
+
+struct class *sec_class;
+EXPORT_SYMBOL(sec_class);
+
+struct device *switch_dev;
+EXPORT_SYMBOL(switch_dev);
 
 /* Following are default values for UCON, ULCON and UFCON UART registers */
 #define APOLLO_UCON_DEFAULT	(S3C2410_UCON_TXILEVEL |	\
@@ -404,6 +412,51 @@ static struct max8998_platform_data apollo_max8998_pdata = {
 	.buck2_voltage2	= 1200000,
 };
 #endif
+
+static void uart_switch_init(void)
+{
+	int ret;
+	struct device *uartswitch_dev;
+
+	uartswitch_dev = device_create(sec_class, NULL, 0, NULL, "uart_switch");
+	if (IS_ERR(uartswitch_dev)) {
+		pr_err("Failed to create device(uart_switch)!\n");
+		return;
+	}
+
+	ret = gpio_request(GPIO_UART_SEL, "UART_SEL");
+	if (ret < 0) {
+		pr_err("Failed to request GPIO_UART_SEL!\n");
+		return;
+	}
+	s3c_gpio_setpull(GPIO_UART_SEL, S3C_GPIO_PULL_NONE);
+	s3c_gpio_cfgpin(GPIO_UART_SEL, S3C_GPIO_OUTPUT);
+
+	gpio_direction_output(GPIO_UART_SEL, 1);
+
+	gpio_export(GPIO_UART_SEL, 1);
+
+	gpio_export_link(uartswitch_dev, "UART_SEL", GPIO_UART_SEL);
+}
+
+static void apollo_switch_init(void)
+{
+	sec_class = class_create(THIS_MODULE, "sec");
+
+	if (IS_ERR(sec_class))
+		pr_err("Failed to create class(sec)!\n");
+
+	switch_dev = device_create(sec_class, NULL, 0, NULL, "switch");
+
+	if (IS_ERR(switch_dev))
+		pr_err("Failed to create device(switch)!\n");
+};
+
+void switch_usb_ap(void)
+{
+	gpio_set_value(GPIO_USB_SEL30, 1);
+	msleep(10);
+}
 
 static int apollo_hw_rev_pin_value = -1;
 
@@ -810,6 +863,9 @@ static void __init apollo_machine_init(void)
 	samsung_keypad_set_platdata(&apollo_keypad_pdata);
 
 	platform_add_devices(apollo_devices, ARRAY_SIZE(apollo_devices));
+
+	apollo_switch_init();
+	uart_switch_init();
 
 	printk("%s : hw_rev_pin=0x%x\n", __func__, apollo_hw_rev_pin_value);
 	printk("%s : bootmode=0x%x\n", __func__, gpio_get_value(GPIO_BOOT_MODE));
