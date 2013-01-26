@@ -15,6 +15,7 @@ obj-				:=
 obj-$(CONFIG_CPU_S5P6442)	+= cpu.o init.o clock.o dma.o
 obj-$(CONFIG_CPU_S5P6442)	+= cpu-s5p.o
 # TODO: obj-$(CONFIG_PM)		+= pm.o
+obj-$(CONFIG_CMA)			+= reserve-mem.o
 
 # machine support
 
@@ -31,3 +32,5 @@ obj-$(CONFIG_S5P6442_SETUP_KEYPAD)	+= setup-keypad.o
 # TODO: obj-$(CONFIG_S5P6442_SETUP_SDHCI_GPIO)	+= setup-sdhci-gpio.o
 obj-$(CONFIG_S5P6442_SETUP_SPI)		+= dev-spi.o setup-spi.o
 obj-$(CONFIG_S5P6442_SETUP_USB_PHY)	+= setup-usb-phy.o
+obj-$(CONFIG_S5P6442_SETUP_ION)		+= dev-ion.o
+

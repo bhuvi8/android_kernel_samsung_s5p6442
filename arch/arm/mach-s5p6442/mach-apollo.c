@@ -11,6 +11,7 @@
  * published by the Free Software Foundation.
 */
 
+#include <linux/cma.h>
 #include <linux/delay.h>
 #include <linux/fb.h>
 #include <linux/gpio.h>
@@ -547,9 +548,46 @@ int apollo_get_remapped_hw_rev_pin(void)
 	return revision;
 }
 
-static struct i2c_board_info apollo_i2c_devs0[] __initdata = {
-	{ I2C_BOARD_INFO("wm8994", 0x1b), },
-};
+extern void s5p6442_cma_region_reserve(struct cma_region *,
+				struct cma_region *, size_t, const char *);
+
+static void __init s5p6442_reserve_mem(void)
+{
+	static struct cma_region regions[] = {
+		{
+			.name = "ion",
+			.size = 50000 * SZ_1K,
+			{
+				.alignment = SZ_1M
+			}
+		},
+		{
+			.name = "drm_mfc_sh",
+			.size = SZ_1M,
+		},
+		{
+			.name = "drm_msgbox_sh",
+			.size = SZ_1M,
+			.alignment = SZ_1M,
+		},
+		{
+			.size = 0 /* END OF REGION DEFINITIONS */
+		}
+	};
+
+       static const char map[] __initconst =
+		"ion-s5p6442/mfc_sh=drm_mfc_sh;"
+		"ion-s5p6442/msgbox_sh=drm_msgbox_sh;"
+		"s5p-smem/mfc_sh=drm_mfc_sh;"
+		"s5p-smem/msgbox_sh=drm_msgbox_sh;"
+		"ion-s5p6442=ion;"
+		"s5p-mfc-v6/f=fw;"
+		"s5p-mfc-v6/a=b1;";
+
+	struct cma_region *regions_secure = NULL;
+
+	s5p6442_cma_region_reserve(regions, regions_secure, 0, map);
+}
 
 static struct i2c_gpio_platform_data apollo_i2c_gpio_pmic_data = {
 	.sda_pin	= S5P6442_GPJ4(0),	/* XMSMCSN */
@@ -842,8 +880,6 @@ static void __init apollo_machine_init(void)
 	s3c_i2c0_set_platdata(NULL);
 	s3c_i2c1_set_platdata(NULL);
 	s3c_i2c2_set_platdata(NULL);
-	i2c_register_board_info(0, apollo_i2c_devs0,
-			ARRAY_SIZE(apollo_i2c_devs0));
 
 	apollo_pmic_init();
 	i2c_register_board_info(4, i2c_gpio_pmic_devs,
@@ -896,5 +932,6 @@ MACHINE_START(APOLLO, "apollo")
 	.init_machine	= apollo_machine_init,
 	.timer		= &s5p_timer,
 	.restart	= s5p6442_restart,
+	.reserve	= s5p6442_reserve_mem,
 MACHINE_END
 

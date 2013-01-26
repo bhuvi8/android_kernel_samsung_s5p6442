@@ -55,6 +55,11 @@ config S5P6442_SETUP_USB_PHY
 	help
 	  Common setup code for USB PHY controller
 
+config S5P6442_SETUP_ION
+	bool "S5P6442 ION"
+	help
+	  Common setup code for Android ION memory
+
 menu "S5P6442 Machines"
 
 config MACH_SMDK6442
