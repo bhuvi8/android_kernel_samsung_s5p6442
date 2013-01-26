@@ -625,66 +625,6 @@ static void __init apollo_pmic_init(void)
 }
 
 
-static struct i2c_gpio_platform_data i2c3_platdata = {
-        .sda_pin                = GPIO_AP_SDA,
-        .scl_pin                = GPIO_AP_SCL,
-        .udelay                 = 2,    /* 250KHz */
-        .sda_is_open_drain      = 0,
-        .scl_is_open_drain      = 0,
-        .scl_is_output_only     = 1,
-};
-
-static struct platform_device i2c3_gpio = {
-        .name                           = "i2c-gpio",
-        .id                                     = 3,
-        .dev.platform_data      = &i2c3_platdata,
-};
-
-static struct i2c_gpio_platform_data i2c7_platdata = {
-        .sda_pin                = GPIO_FM_SDA_2_8V,
-        .scl_pin                = GPIO_FM_SCL_2_8V,
-        .udelay                 = 2,           /*250KHz*/
-	.sda_is_open_drain      = 0,
-        .scl_is_open_drain      = 0,
-        .scl_is_output_only     = 0,
-};
-
-static struct platform_device i2c7_gpio = {
-        .name                           = "i2c-gpio",
-        .id                                     = 7,
-        .dev.platform_data      = &i2c7_platdata,
-};
-
-static struct i2c_gpio_platform_data i2c8_platdata = {
-        .sda_pin                = GPIO_AP_SDA_2_8V,
-        .scl_pin                = GPIO_AP_SCL_2_8V,
-        .udelay                 = 2,           /*250KHz*/
-	.sda_is_open_drain      = 0,
-        .scl_is_open_drain      = 0,
-        .scl_is_output_only     = 0,
-};
-
-static struct platform_device i2c8_gpio = {
-        .name                           = "i2c-gpio",
-        .id                                     = 8,
-        .dev.platform_data      = &i2c8_platdata,
-};
-
-static struct i2c_gpio_platform_data i2c9_platdata = {
-        .sda_pin                = GPIO_SENSOR_SDA,
-        .scl_pin                = GPIO_SENSOR_SCL,
-        .udelay                 = 2,           /*250KHz*/
-	.sda_is_open_drain      = 0,
-        .scl_is_open_drain      = 0,
-        .scl_is_output_only     = 0,
-};
-
-static struct platform_device i2c9_gpio = {
-        .name                	= "i2c-gpio",
-        .id                   	= 9,
-        .dev.platform_data      = &i2c9_platdata,
-};
-
 static void __init apollo_map_io(void)
 {
 	s5p_init_io(NULL, 0, S5P_VA_CHIPID);
@@ -840,14 +780,7 @@ static struct s3c_fb_platdata apollo_lcd0_pdata __initdata = {
 };
 
 static struct platform_device *apollo_devices[] __initdata = {
-	&s3c_device_i2c0,
-	&s3c_device_i2c1,
-	&s3c_device_i2c2,
-	&i2c3_gpio,
 	&apollo_i2c_gpio_pmic,
-	&i2c7_gpio,
-	&i2c8_gpio,
-	&i2c9_gpio,
 
 	&s5p6442_device_ion,
 
