@@ -14,6 +14,7 @@
 #include <linux/cma.h>
 #include <linux/delay.h>
 #include <linux/fb.h>
+#include <linux/fsa9480.h>
 #include <linux/gpio.h>
 #include <linux/gpio_keys.h>
 #include <linux/i2c.h>
@@ -25,6 +26,7 @@
 #include <linux/serial_core.h>
 #include <linux/switch.h>
 #include <linux/types.h>
+#include <linux/usb/gadget.h>
 
 #include <asm/mach/arch.h>
 #include <asm/mach/map.h>
@@ -398,9 +400,28 @@ static struct max8998_regulator_data apollo_regulators[] = {
 	{ MAX8998_BUCK4, &apollo_buck4_data },
 };
 
+
+struct max8998_charger_callbacks *callbacks;
+static enum cable_type_t set_cable_status;
+
+static void max8998_charger_register_callbacks(
+		struct max8998_charger_callbacks *ptr)
+{
+	callbacks = ptr;
+	/* if there was a cable status change before the charger was
+	ready, send this now */
+	if ((set_cable_status != 0) && callbacks && callbacks->set_cable)
+		callbacks->set_cable(callbacks, set_cable_status);
+}
+
+static struct max8998_charger_data apollo_charger = {
+	.register_callbacks = &max8998_charger_register_callbacks,
+};
+
 static struct max8998_platform_data apollo_max8998_pdata = {
 	.num_regulators	= ARRAY_SIZE(apollo_regulators),
 	.regulators	= apollo_regulators,
+	.charger        = &apollo_charger,
 	.buck1_set1	= S5P6442_GPH0(2),
 	.buck1_set2	= S5P6442_GPH0(3),
 	.buck2_set3	= S5P6442_GPH0(4),
@@ -457,6 +478,92 @@ void switch_usb_ap(void)
 	gpio_set_value(GPIO_USB_SEL30, 1);
 	msleep(10);
 }
+
+static void __init fsa9480_gpio_init(void)
+{
+	s3c_gpio_cfgpin(GPIO_USB_SEL, S3C_GPIO_OUTPUT);
+	s3c_gpio_setpull(GPIO_USB_SEL, S3C_GPIO_PULL_NONE);
+
+	s3c_gpio_cfgpin(GPIO_UART_SEL, S3C_GPIO_OUTPUT);
+	s3c_gpio_setpull(GPIO_UART_SEL, S3C_GPIO_PULL_NONE);
+
+	s3c_gpio_cfgpin(GPIO_JACK_nINT, S3C_GPIO_SFN(0xf));
+	s3c_gpio_setpull(GPIO_JACK_nINT, S3C_GPIO_PULL_NONE);
+}
+
+static void fsa9480_usb_cb(bool attached)
+{
+	struct usb_gadget *gadget = platform_get_drvdata(&s3c_device_usbgadget);
+
+	if (gadget) {
+		if (attached)
+			usb_gadget_vbus_connect(gadget);
+		else
+			usb_gadget_vbus_disconnect(gadget);
+	}
+
+	set_cable_status = attached ? CABLE_TYPE_USB : CABLE_TYPE_NONE;
+	if (callbacks && callbacks->set_cable)
+		callbacks->set_cable(callbacks, set_cable_status);
+}
+
+static void fsa9480_charger_cb(bool attached)
+{
+	set_cable_status = attached ? CABLE_TYPE_AC : CABLE_TYPE_NONE;
+	if (callbacks && callbacks->set_cable)
+		callbacks->set_cable(callbacks, set_cable_status);
+}
+
+static struct switch_dev switch_dock = {
+	.name = "dock",
+};
+
+static void fsa9480_deskdock_cb(bool attached)
+{
+	struct usb_gadget *gadget = platform_get_drvdata(&s3c_device_usbgadget);
+
+	if (attached)
+		switch_set_state(&switch_dock, 1);
+	else
+		switch_set_state(&switch_dock, 0);
+
+	if (gadget) {
+		if (attached)
+			usb_gadget_vbus_connect(gadget);
+		else
+			usb_gadget_vbus_disconnect(gadget);
+	}
+
+	set_cable_status = attached ? CABLE_TYPE_USB : CABLE_TYPE_NONE;
+	if (callbacks && callbacks->set_cable)
+		callbacks->set_cable(callbacks, set_cable_status);
+}
+
+static void fsa9480_cardock_cb(bool attached)
+{
+	if (attached)
+		switch_set_state(&switch_dock, 2);
+	else
+		switch_set_state(&switch_dock, 0);
+}
+
+static void fsa9480_reset_cb(void)
+{
+	int ret;
+
+	/* for CarDock, DeskDock */
+	ret = switch_dev_register(&switch_dock);
+	if (ret < 0)
+		pr_err("Failed to register dock switch. %d\n", ret);
+}
+
+static struct fsa9480_platform_data fsa9480_pdata = {
+	.usb_cb = fsa9480_usb_cb,
+	.charger_cb = fsa9480_charger_cb,
+	.deskdock_cb = fsa9480_deskdock_cb,
+	.cardock_cb = fsa9480_cardock_cb,
+	.reset_cb = fsa9480_reset_cb,
+};
 
 static int apollo_hw_rev_pin_value = -1;
 
@@ -609,6 +716,12 @@ static struct i2c_board_info i2c_gpio_pmic_devs[] __initdata = {
 		.platform_data = &apollo_max8998_pdata,
 	},
 #endif
+	{
+		I2C_BOARD_INFO("fsa9480", 0x4A >> 1),
+		.platform_data = &fsa9480_pdata,
+		.irq = IRQ_EINT(23),
+	},
+
 };
 
 static void __init apollo_pmic_init(void)
@@ -783,6 +896,9 @@ static struct platform_device *apollo_devices[] __initdata = {
 	&s5p_device_mfc_l,
 	&s5p_device_mfc_r,
 
+	//&s3c_device_usb_hsotg,
+	//&s3c_device_usbgadget,
+
 	&s5p_device_onenand,
 };
 
@@ -810,6 +926,8 @@ static void __init apollo_machine_init(void)
 	s3c_fb_set_platdata(&apollo_lcd0_pdata);
 
 	platform_add_devices(apollo_devices, ARRAY_SIZE(apollo_devices));
+
+	fsa9480_gpio_init();
 
 	apollo_switch_init();
 	uart_switch_init();

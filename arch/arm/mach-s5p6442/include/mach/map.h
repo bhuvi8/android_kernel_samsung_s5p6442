@@ -58,8 +58,12 @@
 
 #define S5P6442_PA_SPI		0xEC300000
 
+/* usb */
 #define S5P6442_PA_HSOTG	0xED200000
 #define S5P6442_PA_HSPHY	0xED300000
+#define S5P_SZ_USB_EHCI     	SZ_1M
+#define S5P_SZ_USB_OHCI     	SZ_1M
+
 
 #define S5P6442_PA_MFC		0xF1000000
 
@@ -100,6 +104,13 @@
 
 #define S5P_PA_LCD		S5P6442_PA_LCD
 #define S3C_PA_FB		S5P6442_PA_LCD
+
+#define S3C_PA_USB_HSOTG	S5P6442_PA_HSOTG
+#define S3C_PA_OTG              S5P6442_PA_HSOTG
+#define S3C_SZ_OTG              SZ_1M
+
+#define S3C_PA_OTGSFR           S5P6442_PA_HSPHY
+#define S3C_SZ_OTGSFR           SZ_1M
 
 #define S5P_PA_MFC		S5P6442_PA_MFC
 #define S5P_PA_FIMC0		S5P6442_PA_FIMC0

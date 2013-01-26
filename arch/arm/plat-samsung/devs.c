@@ -1408,6 +1408,29 @@ void __init s3c24xx_udc_set_platdata(struct s3c2410_udc_mach_info *pd)
 }
 #endif /* CONFIG_PLAT_S3C24XX */
 
+#ifdef CONFIG_ARCH_S5P6442
+static struct resource s3c_usbgadget_resource[] = {
+	[0] = {
+		.start	= S3C_PA_OTG,
+		.end	= S3C_PA_OTG + S3C_SZ_OTG - 1,
+		.flags	= IORESOURCE_MEM,
+	},
+	[1] = {
+		.start	= IRQ_OTG,
+		.end	= IRQ_OTG,
+		.flags	= IORESOURCE_IRQ,
+	}
+};
+
+struct platform_device s3c_device_usbgadget = {
+	.name		= "s3c-usbgadget",
+	.id		= -1,
+	.num_resources	= ARRAY_SIZE(s3c_usbgadget_resource),
+	.resource	= s3c_usbgadget_resource,
+};
+#endif /* CONFIG_ARCH_S5P6442 */
+
+
 /* USB EHCI Host Controller */
 
 #ifdef CONFIG_S5P_DEV_USB_EHCI
