@@ -20,7 +20,6 @@
 #include <linux/i2c-gpio.h>
 #include <linux/init.h>
 #include <linux/input.h>
-#include <linux/input/matrix_keypad.h>
 #include <linux/kernel.h>
 #include <linux/mfd/max8998.h>
 #include <linux/serial_core.h>
@@ -46,7 +45,6 @@
 #include <plat/fb.h>
 #include <plat/gpio-cfg.h>
 #include <plat/iic.h>
-#include <plat/keypad.h>
 #include <plat/mfc.h>
 #include <plat/onenand-core.h>
 #include <plat/regs-fb-v4.h>
@@ -633,26 +631,6 @@ static void __init apollo_map_io(void)
 	s5p_set_timer_source(S5P_PWM3, S5P_PWM4);
 }
 
-static uint32_t apollo_keymap[] __initdata = {
-	KEY(0, 3, KEY_1), KEY(0, 4, KEY_2), KEY(0, 5, KEY_3),
-	KEY(0, 6, KEY_4), KEY(0, 7, KEY_5),
-	KEY(1, 3, KEY_A), KEY(1, 4, KEY_B), KEY(1, 5, KEY_C),
-	KEY(1, 6, KEY_D), KEY(1, 7, KEY_E)
-};
-
-static struct matrix_keymap_data apollo_keymap_data = {
-	.keymap			= apollo_keymap,
-	.keymap_size		= ARRAY_SIZE(apollo_keymap),
-};
-
-static struct samsung_keypad_platdata apollo_keypad_pdata __initdata = {
-	.keymap_data		= &apollo_keymap_data,
-	.rows			= 4,
-	.cols			= 4,
-	.no_autorepeat		= 1,
-	.wakeup			= 1,
-};
-
 static struct gpio_keys_button apollo_gpio_keys_data[] = {
 	{
 		.gpio			= S5P6442_GPH2(6),
@@ -793,7 +771,6 @@ static struct platform_device *apollo_devices[] __initdata = {
 	&s3c_device_hsmmc1,		// SDIO for WLAN
 	&s3c_device_hsmmc2,
 
-	&samsung_device_keypad,
 	&apollo_gpio_keys,
 
 	&s5p_device_fimc0,
@@ -831,8 +808,6 @@ static void __init apollo_machine_init(void)
 
 	s5p6442_ion_set_platdata();
 	s3c_fb_set_platdata(&apollo_lcd0_pdata);
-
-	samsung_keypad_set_platdata(&apollo_keypad_pdata);
 
 	platform_add_devices(apollo_devices, ARRAY_SIZE(apollo_devices));
 
