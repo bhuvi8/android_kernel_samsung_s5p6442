@@ -37,6 +37,7 @@
 #include <mach/map.h>
 #include <mach/regs-clock.h>
 #include <mach/regs-gpio.h>
+#include <mach/s5p6442-ion.h>
 #include <mach/system.h>
 
 #include <plat/camport.h>
@@ -848,6 +849,7 @@ static struct platform_device *apollo_devices[] __initdata = {
 	&i2c8_gpio,
 	&i2c9_gpio,
 
+	&s5p6442_device_ion,
 
 	&samsung_asoc_dma,
 	&s5p6442_device_iis0,
@@ -894,6 +896,7 @@ static void __init apollo_machine_init(void)
 
 	apollo_camera_init();
 
+	s5p6442_ion_set_platdata();
 	s3c_fb_set_platdata(&apollo_lcd0_pdata);
 
 	samsung_keypad_set_platdata(&apollo_keypad_pdata);
