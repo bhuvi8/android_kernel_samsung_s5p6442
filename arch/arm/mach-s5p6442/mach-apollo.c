@@ -103,12 +103,6 @@ static struct s3c2410_uartcfg apollo_uartcfgs[] __initdata = {
 	},
 };
 
-static struct s3c_sdhci_platdata apollo_hsmmc0_pdata __initdata = {
-	.cd_type		= S3C_SDHCI_CD_INTERNAL,
-	.clk_type		= S3C_SDHCI_CLK_DIV_EXTERNAL,
-	.max_width		= 8,
-};
-
 static struct s3c_sdhci_platdata apollo_hsmmc1_pdata __initdata = {
 	.max_width		= 4,
 	.cd_type		= S3C_SDHCI_CD_INTERNAL,
@@ -127,7 +121,8 @@ static struct regulator_consumer_supply apollo_ldo3_consumers[] = {
 };
 
 static struct regulator_consumer_supply apollo_ldo5_consumers[] = {
-	REGULATOR_SUPPLY("vmmc", "s3c-sdhci.0"),
+	REGULATOR_SUPPLY("vmmc", "s3c-sdhci.1"),
+	REGULATOR_SUPPLY("vmmc", "s3c-sdhci.2"),
 };
 
 static struct regulator_consumer_supply apollo_ldo8_consumers[] = {
@@ -183,11 +178,12 @@ static struct regulator_init_data apollo_ldo4_data = {
 
 static struct regulator_init_data apollo_ldo5_data = {
 	.constraints	= {
-		.name		= "VTF_2.8V",
-		.min_uV		= 2800000,
-		.max_uV		= 2800000,
+		.name		= "VTF_3.3V",
+		.min_uV		= 1800000,
+		.max_uV		= 3300000,
 		.apply_uV	= 1,
-		.valid_ops_mask	= REGULATOR_CHANGE_STATUS,
+		.valid_ops_mask	= REGULATOR_CHANGE_VOLTAGE | 
+				  REGULATOR_CHANGE_STATUS,
 	},
 	.num_consumer_supplies = ARRAY_SIZE(apollo_ldo5_consumers),
 	.consumer_supplies = apollo_ldo5_consumers,
@@ -880,7 +876,6 @@ static struct platform_device *apollo_devices[] __initdata = {
 	&s3c_device_wdt,
 	&s3c_device_rtc,
 
-	&s3c_device_hsmmc0,
 	&s3c_device_hsmmc1,		// SDIO for WLAN
 	&s3c_device_hsmmc2,
 
@@ -913,7 +908,6 @@ static void __init apollo_machine_init(void)
 	i2c_register_board_info(4, i2c_gpio_pmic_devs,
 			ARRAY_SIZE(i2c_gpio_pmic_devs));
 
-	s3c_sdhci0_set_platdata(&apollo_hsmmc0_pdata);
 	s3c_sdhci1_set_platdata(&apollo_hsmmc1_pdata);
 	s3c_sdhci2_set_platdata(&apollo_hsmmc2_pdata);
 
