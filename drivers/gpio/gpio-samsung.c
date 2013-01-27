@@ -471,23 +471,6 @@ static struct samsung_gpio_cfg s5p64x0_gpio_cfg_rbank = {
 };
 #endif
 
-#if defined(CONFIG_CPU_S5P6442)
-static struct samsung_gpio_cfg s5p6442_gpio_cfg = {
-	.cfg_eint	= 0xf,
-	.set_config	= samsung_gpio_setcfg_4bit,
-	.get_config	= samsung_gpio_getcfg_4bit,
-	.set_pull	= samsung_gpio_setpull_updown,
-	.get_pull	= samsung_gpio_getpull_updown,
-};
-
-static struct samsung_gpio_cfg s5p6442_gpio_cfg_noint = {
-	.set_config	= samsung_gpio_setcfg_4bit,
-	.get_config	= samsung_gpio_getcfg_4bit,
-	.set_pull	= samsung_gpio_setpull_updown,
-	.get_pull	= samsung_gpio_getpull_updown,
-};
-#endif
-
 static struct samsung_gpio_cfg samsung_gpio_cfgs[] = {
 	[0] = {
 		.cfg_eint	= 0x0,
