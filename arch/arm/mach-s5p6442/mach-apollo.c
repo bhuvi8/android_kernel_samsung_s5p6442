@@ -23,6 +23,8 @@
 #include <linux/input.h>
 #include <linux/kernel.h>
 #include <linux/mfd/max8998.h>
+#include <linux/mfd/wm8994/pdata.h>
+#include <linux/regulator/fixed.h>
 #include <linux/serial_core.h>
 #include <linux/switch.h>
 #include <linux/types.h>
@@ -430,6 +432,103 @@ static struct max8998_platform_data apollo_max8998_pdata = {
 };
 #endif
 
+static struct regulator_consumer_supply wm8994_fixed_voltage0_supplies[] = {
+	REGULATOR_SUPPLY("DBVDD", "1-001a"),
+	REGULATOR_SUPPLY("AVDD2", "1-001a"),
+	REGULATOR_SUPPLY("CPVDD", "1-001a"),
+};
+
+static struct regulator_consumer_supply wm8994_fixed_voltage1_supplies[] = {
+	REGULATOR_SUPPLY("SPKVDD1", "1-001a"),
+	REGULATOR_SUPPLY("SPKVDD2", "1-001a"),
+};
+
+static struct regulator_init_data wm8994_fixed_voltage0_init_data = {
+	.constraints = {
+		.always_on = 1,
+	},
+	.num_consumer_supplies	= ARRAY_SIZE(wm8994_fixed_voltage0_supplies),
+	.consumer_supplies	= wm8994_fixed_voltage0_supplies,
+};
+
+static struct regulator_init_data wm8994_fixed_voltage1_init_data = {
+	.constraints = {
+		.always_on = 1,
+	},
+	.num_consumer_supplies	= ARRAY_SIZE(wm8994_fixed_voltage1_supplies),
+	.consumer_supplies	= wm8994_fixed_voltage1_supplies,
+};
+
+static struct fixed_voltage_config wm8994_fixed_voltage0_config = {
+	.supply_name	= "VCC_1.8V_PDA",
+	.microvolts	= 1800000,
+	.gpio		= -EINVAL,
+	.init_data	= &wm8994_fixed_voltage0_init_data,
+};
+
+static struct fixed_voltage_config wm8994_fixed_voltage1_config = {
+	.supply_name	= "V_BAT",
+	.microvolts	= 3700000,
+	.gpio		= -EINVAL,
+	.init_data	= &wm8994_fixed_voltage1_init_data,
+};
+
+static struct platform_device wm8994_fixed_voltage0 = {
+	.name		= "reg-fixed-voltage",
+	.id		= 0,
+	.dev		= {
+		.platform_data	= &wm8994_fixed_voltage0_config,
+	},
+};
+
+static struct platform_device wm8994_fixed_voltage1 = {
+	.name		= "reg-fixed-voltage",
+	.id		= 1,
+	.dev		= {
+		.platform_data	= &wm8994_fixed_voltage1_config,
+	},
+};
+
+static struct regulator_consumer_supply wm8994_avdd1_supply =
+	REGULATOR_SUPPLY("AVDD1", "1-001a");
+
+static struct regulator_consumer_supply wm8994_dcvdd_supply =
+	REGULATOR_SUPPLY("DCVDD", "1-001a");
+
+static struct regulator_init_data wm8994_ldo1_data = {
+	.constraints	= {
+		.name		= "AVDD1_3.0V",
+		.valid_ops_mask	= REGULATOR_CHANGE_STATUS,
+	},
+	.num_consumer_supplies	= 1,
+	.consumer_supplies	= &wm8994_avdd1_supply,
+};
+
+static struct regulator_init_data wm8994_ldo2_data = {
+	.constraints	= {
+		.name		= "DCVDD_1.0V",
+	},
+	.num_consumer_supplies	= 1,
+	.consumer_supplies	= &wm8994_dcvdd_supply,
+};
+
+static struct wm8994_pdata wm8994_platform_data = {
+	/* configure gpio1 function: 0x0001(Logic level input/output) */
+	.gpio_defaults[0] = 0x0001,
+	/* configure gpio3/4/5/7 function for AIF2 voice */
+	.gpio_defaults[2] = 0x8100,
+	.gpio_defaults[3] = 0x8100,
+	.gpio_defaults[4] = 0x8100,
+	.gpio_defaults[6] = 0x0100,
+	/* configure gpio8/9/10/11 function for AIF3 BT */
+	.gpio_defaults[7] = 0x8100,
+	.gpio_defaults[8] = 0x0100,
+	.gpio_defaults[9] = 0x0100,
+	.gpio_defaults[10] = 0x0100,
+	.ldo[0]	= { S5P6442_GPH1(5), &wm8994_ldo1_data },	/* XM0FRNB_2 */
+	.ldo[1]	= { 0, &wm8994_ldo2_data },
+};
+
 static void uart_switch_init(void)
 {
 	int ret;
@@ -691,6 +790,26 @@ static void __init s5p6442_reserve_mem(void)
 	s5p6442_cma_region_reserve(regions, regions_secure, 0, map);
 }
 
+static struct i2c_gpio_platform_data apollo_i2c_gpio_audio_data = {
+	.sda_pin	= S5P6442_MP05(3),	/* XM0ADDR_11 */
+	.scl_pin	= S5P6442_MP05(2),	/* XM0ADDR_10 */
+};
+
+static struct platform_device apollo_i2c_gpio_audio = {
+	.name		= "i2c-gpio",
+	.id		= 1,
+	.dev		= {
+		.platform_data	= &apollo_i2c_gpio_audio_data,
+	},
+};
+
+static struct i2c_board_info i2c_gpio_audio_devs[] __initdata = {
+	{
+		I2C_BOARD_INFO("wm8994", 0x1a),
+		.platform_data	= &wm8994_platform_data,
+	},
+};
+
 static struct i2c_gpio_platform_data apollo_i2c_gpio_pmic_data = {
 	.sda_pin	= S5P6442_GPJ4(0),	/* XMSMCSN */
 	.scl_pin	= S5P6442_GPJ4(3),	/* XMSMIRQN */
@@ -717,7 +836,6 @@ static struct i2c_board_info i2c_gpio_pmic_devs[] __initdata = {
 		.platform_data = &fsa9480_pdata,
 		.irq = IRQ_EINT(23),
 	},
-
 };
 
 static void __init apollo_pmic_init(void)
@@ -867,6 +985,7 @@ static struct s3c_fb_platdata apollo_lcd0_pdata __initdata = {
 };
 
 static struct platform_device *apollo_devices[] __initdata = {
+	&apollo_i2c_gpio_audio,
 	&apollo_i2c_gpio_pmic,
 
 	&s5p6442_device_ion,
@@ -895,6 +1014,9 @@ static struct platform_device *apollo_devices[] __initdata = {
 	//&s3c_device_usbgadget,
 
 	&s5p_device_onenand,
+
+	&wm8994_fixed_voltage0,
+	&wm8994_fixed_voltage1,
 };
 
 static void __init apollo_machine_init(void)
@@ -903,6 +1025,9 @@ static void __init apollo_machine_init(void)
 	s3c_i2c0_set_platdata(NULL);
 	s3c_i2c1_set_platdata(NULL);
 	s3c_i2c2_set_platdata(NULL);
+
+	i2c_register_board_info(1, i2c_gpio_audio_devs,
+			ARRAY_SIZE(i2c_gpio_audio_devs));
 
 	apollo_pmic_init();
 	i2c_register_board_info(4, i2c_gpio_pmic_devs,
