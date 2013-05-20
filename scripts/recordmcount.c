@@ -33,6 +33,10 @@
 #include <string.h>
 #include <unistd.h>
 
+#ifdef __APPLE__
+#include <stdint.h>
+#endif
+
 static int fd_map;	/* File descriptor for file being modified. */
 static int mmap_failed; /* Boolean flag. */
 static void *ehdr_curr; /* current ElfXX_Ehdr *  for resource cleanup */

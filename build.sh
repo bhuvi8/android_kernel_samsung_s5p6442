@@ -5,10 +5,12 @@
 # By Mark "Hill Beast" Kennard
 #
 
-TOOLCHAIN=/usr/arm-4.6-toolchain/bin/arm-none-eabi-
+TOOLCHAIN=/usr/local/arm-eabi-4.4/bin/arm-none-linux-gnueabi-
 ARCH=arm
+CROSS_COMPILE=$TOOLCHAIN
 
-CPUCORES=`grep "cpu cores" /proc/cpuinfo | awk '{ print $4 }' | head -c 1`
+# CPUCORES=`grep "cpu cores" /proc/cpuinfo | awk '{ print $4 }' | head -c 1`
+CPUCORES=8
 
 USEOUTDIR=`echo $1 $2 $3 $4 | grep -useout`
 
@@ -60,10 +62,10 @@ fi
 
 if [ -z "$USEOUTDIR" ]; then
 	echo "make -j$CPUCORES CROSS_COMPILE=$TOOLCHAIN ARCH=$ARCH"
-	make -j$CPUCORES CROSS_COMPILE=$TOOLCHAIN ARCH=$ARCH
+	gmake -j$CPUCORES CROSS_COMPILE=$TOOLCHAIN ARCH=$ARCH
 else
 	echo "make -j$CPUCORES CROSS_COMPILE=$TOOLCHAIN ARCH=$ARCH O=$USEOUTDIR"
-	make -j$CPUCORES CROSS_COMPILE=$TOOLCHAIN ARCH=$ARCH O=$USEOUTDIR
+	gmake -j$CPUCORES CROSS_COMPILE=$TOOLCHAIN ARCH=$ARCH O=$USEOUTDIR
 fi
 
 if test -f $USEOUTDIR"arch/arm/boot/zImage"; then

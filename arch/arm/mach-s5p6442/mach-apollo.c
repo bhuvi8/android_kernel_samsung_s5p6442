@@ -763,15 +763,6 @@ static void __init s5p6442_reserve_mem(void)
 			}
 		},
 		{
-			.name = "drm_mfc_sh",
-			.size = SZ_1M,
-		},
-		{
-			.name = "drm_msgbox_sh",
-			.size = SZ_1M,
-			.alignment = SZ_1M,
-		},
-		{
 			.size = 0 /* END OF REGION DEFINITIONS */
 		}
 	};
