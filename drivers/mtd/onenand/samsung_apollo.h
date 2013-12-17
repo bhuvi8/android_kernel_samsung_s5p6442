@@ -47,12 +47,12 @@ struct mtd_partition s3c_partition_info[] = {
 	{
 		.name		= "cache",
 		.offset		= (1760*SZ_256K),
-		.size		= (152*SZ_256K), 
+		.size		= (148*SZ_256K), 
 	},
 	{
 		.name		= "efs",
-		.offset		= (1912*SZ_256K),
-		.size		= (92*SZ_256K), 
+		.offset		= (1908*SZ_256K),
+		.size		= (96*SZ_256K), 
 	},
 /*
         {
