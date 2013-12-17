@@ -586,6 +586,7 @@ static void __init fsa9480_gpio_init(void)
 	s3c_gpio_setpull(GPIO_JACK_nINT, S3C_GPIO_PULL_NONE);
 }
 
+#ifdef CONFIG_USB_SWITCH_FSA9480
 static void fsa9480_usb_cb(bool attached)
 {
 	struct usb_gadget *gadget = platform_get_drvdata(&s3c_device_usbgadget);
@@ -660,6 +661,8 @@ static struct fsa9480_platform_data fsa9480_pdata = {
 	.reset_cb = fsa9480_reset_cb,
 };
 
+#endif
+
 static int apollo_hw_rev_pin_value = -1;
 
 static void check_hw_rev_pin(void)
@@ -684,12 +687,10 @@ static void check_hw_rev_pin(void)
 	
 }
 
-int apollo_get_hw_type(void)
-{
+int apollo_get_hw_type(void) {
 	int type;
 
-	switch(apollo_hw_rev_pin_value)
-		{
+	switch(apollo_hw_rev_pin_value) {
 		case 2:		// apollo rev0.4 (memory 4-2-1)
 		case 6:		// apollo rev0.5
 		case 4:		// apollo rev0.6
@@ -705,7 +706,7 @@ int apollo_get_hw_type(void)
 		default:
 			type = 0;
 			break;
-		}
+	}
 
 	return type;
 }
@@ -822,11 +823,13 @@ static struct i2c_board_info i2c_gpio_pmic_devs[] __initdata = {
 		.platform_data = &apollo_max8998_pdata,
 	},
 #endif
+#ifdef CONFIG_USB_SWITCH_FSA9480
 	{
 		I2C_BOARD_INFO("fsa9480", 0x4A >> 1),
 		.platform_data = &fsa9480_pdata,
 		.irq = IRQ_EINT(23),
 	},
+#endif
 };
 
 static void __init apollo_pmic_init(void)
@@ -978,9 +981,11 @@ static struct s3c_fb_platdata apollo_lcd0_pdata __initdata = {
 static struct platform_device *apollo_devices[] __initdata = {
 	&apollo_i2c_gpio_audio,
 	&apollo_i2c_gpio_pmic,
-
+	
+	#ifdef CONFIG_CONFIG_S5P6442_SETUP_ION
 	&s5p6442_device_ion,
-
+	#endif
+	
 	&samsung_asoc_dma,
 	&s5p6442_device_iis0,
 	&s3c_device_wdt,
